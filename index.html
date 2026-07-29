@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>AI 财务工作台</title>
+<style>
+:root {
+  --bg: #0a0e14;
+  --panel: #131820;
+  --card: #191f2b;
+  --border: #252d3a;
+  --cyan: #00e5c3;
+  --blue: #3b8bff;
+  --red: #ff4d6a;
+  --yellow: #ffb74d;
+  --text: #ccd6e0;
+  --sub: #6b7a90;
+  --green: #45d68c;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  max-width:480px;
+  margin:0 auto;
+  min-height:100vh;
+  -webkit-tap-highlight-color:transparent;
+}
+.header{
+  padding:20px 16px 8px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.logo{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.logo-icon{
+  width:36px;height:36px;
+  background:linear-gradient(135deg,var(--cyan),var(--blue));
+  border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;
+}
+.logo h1{font-size:18px;font-weight:700;letter-spacing:0.5px}
+.version{
+  font-size:11px;
+  color:var(--sub);
+  background:var(--card);
+  padding:4px 10px;
+  border-radius:20px;
+}
+.tabs{
+  display:flex;
+  gap:4px;
+  padding:12px 16px;
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+.tabs::-webkit-scrollbar{display:none}
+.tab{
+  flex-shrink:0;
+  padding:8px 16px;
+  border-radius:20px;
+  font-size:13px;
+  font-weight:500;
+  background:var(--card);
+  color:var(--sub);
+  border:none;
+  cursor:pointer;
+  transition:all .2s;
+  white-space:nowrap;
+}
+.tab.active{
+  background:linear-gradient(135deg,var(--cyan),var(--blue));
+  color:#000;
+  font-weight:600;
+}
+.panel{
+  display:none;
+  padding:0 16px 100px;
+}
+.panel.active{display:block}
+.card{
+  background:var(--card);
+  border-radius:16px;
+  padding:18px;
+  margin-bottom:14px;
+  border:1px solid var(--border);
+}
+.card-title{
+  font-size:13px;
+  color:var(--sub);
+  margin-bottom:12px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+}
+.label{
+  font-size:13px;
+  color:var(--sub);
+  margin-bottom:5px;
+  display:block;
+}
+.input-row{
+  display:flex;
+  gap:10px;
+  margin-bottom:12px;
+}
+.input-group{flex:1}
+input,select{
+  width:100%;
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:12px 14px;
+  color:var(--text);
+  font-size:15px;
+  outline:none;
+  transition:border .2s;
+}
+input:focus,select:focus{border-color:var(--cyan)}
+.result-box{
+  background:var(--panel);
+  border-radius:12px;
+  padding:16px;
+  margin-top:12px;
+}
+.result-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:8px 0;
+  border-bottom:1px solid var(--border);
+  font-size:14px;
+}
+.result-row:last-child{border-bottom:none}
+.result-val{
+  font-weight:700;
+  font-size:16px;
+}
+.result-val.cyan{color:var(--cyan)}
+.result-val.red{color:var(--red)}
+.result-val.green{color:var(--green)}
+.result-val.blue{color:var(--blue)}
+.big-number{
+  font-size:36px;
+  font-weight:800;
+  text-align:center;
+  padding:10px 0;
+}
+.big-number.cyan{color:var(--cyan)}
+.btn{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:12px;
+  font-size:15px;
+  font-weight:600;
+  cursor:pointer;
+  transition:all .2s;
+  margin-top:8px;
+}
+.btn-primary{
+  background:linear-gradient(135deg,var(--cyan),var(--blue));
+  color:#000;
+}
+.btn-outline{
+  background:transparent;
+  border:1px solid var(--cyan);
+  color:var(--cyan);
+}
+.tag{
+  display:inline-block;
+  padding:3px 10px;
+  border-radius:12px;
+  font-size:11px;
+  font-weight:600;
+}
+.tag-green{background:rgba(69,214,140,.15);color:var(--green)}
+.tag-red{background:rgba(255,77,106,.15);color:var(--red)}
+.tag-blue{background:rgba(59,139,255,.15);color:var(--blue)}
+.summary-cards{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-bottom:14px;
+}
+.s-card{
+  background:var(--card);
+  border-radius:14px;
+  padding:14px;
+  border:1px solid var(--border);
+  text-align:center;
+}
+.s-card .sc-val{font-size:26px;font-weight:800}
+.s-card .sc-label{font-size:11px;color:var(--sub);margin-top:4px}
+.chart-bar{
+  display:flex;
+  height:8px;
+  border-radius:4px;
+  overflow:hidden;
+  margin-top:6px;
+}
+.chart-bar .bar-cyan{background:var(--cyan)}
+.chart-bar .bar-red{background:var(--red)}
+.chart-bar .bar-blue{background:var(--blue)}
+.recon-table{
+  width:100%;
+  font-size:12px;
+  border-collapse:collapse;
+}
+.recon-table th{
+  text-align:left;
+  color:var(--sub);
+  padding:6px 4px;
+  font-weight:500;
+  border-bottom:1px solid var(--border);
+}
+.recon-table td{
+  padding:8px 4px;
+  border-bottom:1px solid var(--border);
+}
+.recon-table .diff{color:var(--red);font-weight:600}
+.recon-table .ok{color:var(--green)}
+.recon-summary{
+  display:flex;
+  gap:12px;
+  margin-top:12px;
+  font-size:13px;
+}
+.recon-summary span{display:flex;align-items:center;gap:4px}
+.badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:22px;
+  height:22px;
+  border-radius:11px;
+  font-size:12px;
+  font-weight:700;
+  padding:0 7px;
+}
+.badge-red{background:rgba(255,77,106,.2);color:var(--red)}
+.badge-green{background:rgba(69,214,140,.2);color:var(--green)}
+@media(max-width:380px){
+  .input-row{flex-direction:column;gap:8px}
+  .summary-cards{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">
+    <div class="logo-icon">⚡</div>
+    <h1>AI 财务工作台</h1>
+  </div>
+  <span class="version">v1.0</span>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab(0)">💰 个税</button>
+  <button class="tab" onclick="switchTab(1)">🧾 发票税</button>
+  <button class="tab" onclick="switchTab(2)">📊 对账</button>
+  <button class="tab" onclick="switchTab(3)">💳 工资表</button>
+</div>
+
+<!-- TAB 0: 个税计算器 -->
+<div class="panel active" id="panel0">
+  <div class="card">
+    <div class="card-title">📌 工资薪金个税 · 累计预扣法</div>
+    <label class="label">税前月薪（元）</label>
+    <input type="number" id="taxSalary" placeholder="例如 15000" oninput="calcTax()" value="15000">
+    
+    <div class="input-row" style="margin-top:12px">
+      <div class="input-group">
+        <label class="label">社保基数</label>
+        <input type="number" id="taxBase" placeholder="默认等于月薪" oninput="calcTax()">
+      </div>
+      <div class="input-group">
+        <label class="label">公积金比例%</label>
+        <select id="taxHousing" onchange="calcTax()">
+          <option value="5">5%</option>
+          <option value="7">7%</option>
+          <option value="12" selected>12%</option>
+        </select>
+      </div>
+    </div>
+
+    <label class="label" style="margin-top:8px">专项附加扣除（月/元）</label>
+    <div class="input-row">
+      <div class="input-group">
+        <select id="taxExtra" onchange="calcTax()">
+          <option value="0">无扣除</option>
+          <option value="2000">租房 1500 + 其他</option>
+          <option value="3000">房贷+子女 3000</option>
+          <option value="4000">房贷+子女+赡养 4000</option>
+          <option value="5000">满额扣 5000</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="calcTax()">⚡ 自动计算</button>
+
+    <div class="result-box" id="taxResult" style="display:none">
+      <div class="summary-cards">
+        <div class="s-card">
+          <div class="sc-val green" id="taxAfter"></div>
+          <div class="sc-label">税后到手</div>
+        </div>
+        <div class="s-card">
+          <div class="sc-val red" id="taxMonthly"></div>
+          <div class="sc-label">月缴个税</div>
+        </div>
+      </div>
+      <div class="result-row"><span>税前工资</span><span class="result-val" id="taxBefore"></span></div>
+      <div class="result-row"><span>社保（养老8%+医疗2%+失业0.5%）</span><span class="result-val" id="taxSocial"></span></div>
+      <div class="result-row"><span>公积金</span><span class="result-val" id="taxHousingAmt"></span></div>
+      <div class="result-row"><span>应纳税所得额</span><span class="result-val" id="taxIncome"></span></div>
+      <div class="result-row"><span>适用税率</span><span class="result-val blue" id="taxRate"></span></div>
+      <div class="result-row"><span>速算扣除数</span><span class="result-val" id="taxDeduction"></span></div>
+      <div class="result-row"><span>全年预估个税</span><span class="result-val red" id="taxYear"></span></div>
+      <div class="result-row"><span>全年到手</span><span class="result-val green" id="taxYearAfter"></span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📌 年终奖 · 单独计税 vs 并入综合所得</div>
+    <label class="label">年终奖金额（元）</label>
+    <div class="input-row">
+      <div class="input-group">
+        <input type="number" id="bonusAmt" placeholder="例如 50000" oninput="calcBonus()" value="50000">
+      </div>
+    </div>
+    <div class="result-box" id="bonusResult" style="display:none">
+      <div class="result-row"><span>单独计税个税</span><span class="result-val red" id="bonusAlone"></span></div>
+      <div class="result-row"><span>单独计税税后</span><span class="result-val green" id="bonusAloneAfter"></span></div>
+      <div class="result-row"><span>并入综合所得个税（预估）</span><span class="result-val red" id="bonusMerge"></span></div>
+      <div class="result-row" style="font-weight:700;color:var(--cyan)"><span>💡 推荐方案</span><span class="result-val cyan" id="bonusRecommend"></span></div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 1: 发票税额计算器 -->
+<div class="panel" id="panel1">
+  <div class="card">
+    <div class="card-title">📌 增值税发票税额自动算</div>
+    <label class="label">发票类型</label>
+    <select id="invType" onchange="calcInvoice()">
+      <option value="13">增值税专用发票 13%</option>
+      <option value="9">增值税 9%（建筑/运输）</option>
+      <option value="6">增值税 6%（服务/技术）</option>
+      <option value="3">小规模纳税人 3%</option>
+      <option value="1">小规模优惠 1%</option>
+    </select>
+
+    <label class="label" style="margin-top:12px">含税金额（元）</label>
+    <input type="number" id="invAmount" placeholder="例如 11300" oninput="calcInvoice()" value="11300">
+    
+    <button class="btn btn-primary" onclick="calcInvoice()">⚡ 自动拆分</button>
+
+    <div class="result-box" id="invResult" style="display:none">
+      <div class="summary-cards">
+        <div class="s-card">
+          <div class="sc-val cyan" id="invExTax"></div>
+          <div class="sc-label">不含税金额</div>
+        </div>
+        <div class="s-card">
+          <div class="sc-val red" id="invTax"></div>
+          <div class="sc-label">税额</div>
+        </div>
+      </div>
+      <div class="result-row"><span>含税总金额</span><span class="result-val" id="invTotal"></span></div>
+      <div class="result-row"><span>税率</span><span class="result-val blue" id="invRate"></span></div>
+      <div class="result-row"><span>不含税金额</span><span class="result-val cyan" id="invExTax2"></span></div>
+      <div class="result-row"><span>税额</span><span class="result-val red" id="invTax2"></span></div>
+      <div class="result-row" style="font-size:12px;color:var(--sub)"><span>公式：不含税=含税÷(1+税率%)</span><span id="invFormula"></span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📌 多张发票汇总</div>
+    <textarea id="invBatch" placeholder="一行一张，格式：金额,税率&#10;例如：&#10;11300,13&#10;53000,6&#10;20600,3" 
+      style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px;min-height:100px;resize:vertical;font-family:monospace" oninput="calcInvoiceBatch()"></textarea>
+    <button class="btn btn-outline" style="margin-top:4px" onclick="calcInvoiceBatch()">汇总计算</button>
+    <div class="result-box" id="invBatchResult" style="display:none">
+      <div class="result-row"><span>发票张数</span><span class="result-val" id="invCount"></span></div>
+      <div class="result-row"><span>含税总计</span><span class="result-val" id="invBatchTotal"></span></div>
+      <div class="result-row"><span>不含税总计</span><span class="result-val cyan" id="invBatchExTax"></span></div>
+      <div class="result-row"><span>税额总计</span><span class="result-val red" id="invBatchTax"></span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📌 加税点报价计算器</div>
+    <label class="label">不含税报价（元）</label>
+    <input type="number" id="quoteBefore" placeholder="例如 10000" oninput="calcQuote()" value="10000">
+    <label class="label" style="margin-top:8px">加税点%</label>
+    <select id="quoteRate" onchange="calcQuote()">
+      <option value="8">加8个点</option>
+      <option value="10">加10个点</option>
+      <option value="13">加13个点</option>
+    </select>
+    <div class="result-box" id="quoteResult" style="display:none">
+      <div class="big-number cyan" id="quoteAfter"></div>
+      <div style="text-align:center;font-size:13px;color:var(--sub)">含税报价（元）</div>
+      <div class="result-row" style="margin-top:8px"><span>不含税</span><span class="result-val" id="quoteBeforeVal"></span></div>
+      <div class="result-row"><span>加点金额</span><span class="result-val red" id="quoteAdded"></span></div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 2: 对账工具 -->
+<div class="panel" id="panel2">
+  <div class="card">
+    <div class="card-title">📌 两列数据自动对账</div>
+    <div class="input-row">
+      <div class="input-group">
+        <label class="label">系统金额</label>
+        <textarea id="reconSys" placeholder="一行一个金额&#10;例如：&#10;1500&#10;2300&#10;890&#10;4200" 
+          style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:10px;color:var(--text);font-size:14px;min-height:100px;resize:vertical;font-family:monospace" oninput="calcRecon()"></textarea>
+      </div>
+      <div class="input-group">
+        <label class="label">银行/支付宝金额</label>
+        <textarea id="reconBank" placeholder="一行一个金额&#10;例如：&#10;1500&#10;2280&#10;890&#10;4200" 
+          style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:10px;color:var(--text);font-size:14px;min-height:100px;resize:vertical;font-family:monospace" oninput="calcRecon()"></textarea>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="calcRecon()">⚡ 开始对账</button>
+    <div class="result-box" id="reconResult" style="display:none">
+      <div class="recon-summary">
+        <span><span class="badge badge-green" id="reconMatch"></span> 匹配</span>
+        <span><span class="badge badge-red" id="reconDiff"></span> 差异</span>
+        <span><span class="badge badge-green" id="reconOnlySys"></span> 仅系统</span>
+        <span><span class="badge badge-red" id="reconOnlyBank"></span> 仅银行</span>
+      </div>
+      <div style="margin-top:10px;max-height:300px;overflow-y:auto">
+        <table class="recon-table" id="reconTable"></table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📌 未达账项调节表</div>
+    <div class="input-row">
+      <div class="input-group">
+        <label class="label">银行对账单余额</label>
+        <input type="number" id="bankBalance" placeholder="0" oninput="calcBankRec()">
+      </div>
+      <div class="input-group">
+        <label class="label">企业账面余额</label>
+        <input type="number" id="bookBalance" placeholder="0" oninput="calcBankRec()">
+      </div>
+    </div>
+    <label class="label">企业已收银行未收（一行一金额）</label>
+    <textarea id="bookReceived" placeholder="例如：&#10;5000&#10;3200" 
+      style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:10px;color:var(--text);font-size:14px;min-height:50px;resize:vertical;font-family:monospace" oninput="calcBankRec()"></textarea>
+    <label class="label" style="margin-top:8px">企业已付银行未付（一行一金额）</label>
+    <textarea id="bookPaid" placeholder="例如：&#10;1800"
+      style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:10px;color:var(--text);font-size:14px;min-height:50px;resize:vertical;font-family:monospace" oninput="calcBankRec()"></textarea>
+    <button class="btn btn-primary" onclick="calcBankRec()">⚡ 调节</button>
+    <div class="result-box" id="bankRecResult" style="display:none">
+      <div class="result-row"><span>银行对账单余额</span><span class="result-val" id="recBankBal"></span></div>
+      <div class="result-row"><span>+ 企业已收银行未收</span><span class="result-val green" id="recAdd1"></span></div>
+      <div class="result-row"><span>- 企业已付银行未付</span><span class="result-val red" id="recSub1"></span></div>
+      <div class="result-row" style="border-top:2px solid var(--cyan)"><span>调节后银行余额</span><span class="result-val cyan" id="recBankAfter"></span></div>
+      <div class="result-row" style="margin-top:6px"><span>企业账面余额</span><span class="result-val" id="recBookBal"></span></div>
+      <div class="result-row"><span>+ 银行已收企业未收</span><span class="result-val green" id="recAdd2"></span></div>
+      <div class="result-row"><span>- 银行已付企业未付</span><span class="result-val red" id="recSub2"></span></div>
+      <div class="result-row" style="border-top:2px solid var(--cyan)"><span>调节后企业余额</span><span class="result-val cyan" id="recBookAfter"></span></div>
+      <div style="text-align:center;margin-top:10px;font-weight:700;font-size:16px" id="recMatchText"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 3: 工资表 -->
+<div class="panel" id="panel3">
+  <div class="card">
+    <div class="card-title">📌 快速工资核算</div>
+    <div class="input-row">
+      <div class="input-group">
+        <label class="label">基本工资</label>
+        <input type="number" id="salBase" placeholder="0" oninput="calcSalary()">
+      </div>
+      <div class="input-group">
+        <label class="label">绩效/提成</label>
+        <input type="number" id="salPerf" placeholder="0" value="0" oninput="calcSalary()">
+      </div>
+    </div>
+    <div class="input-row">
+      <div class="input-group">
+        <label class="label">补贴</label>
+        <input type="number" id="salAllow" placeholder="0" value="0" oninput="calcSalary()">
+      </div>
+      <div class="input-group">
+        <label class="label">请假扣款</label>
+        <input type="number" id="salDeduct" placeholder="0" value="0" oninput="calcSalary()">
+      </div>
+    </div>
+    <div class="input-row">
+      <div class="input-group">
+        <label class="label">社保基数</label>
+        <input type="number" id="salSocBase" placeholder="默认等于基本工资" oninput="calcSalary()">
+      </div>
+      <div class="input-group">
+        <label class="label">公积金比例%</label>
+        <select id="salHousing" onchange="calcSalary()">
+          <option value="5">5%</option>
+          <option value="7">7%</option>
+          <option value="12" selected>12%</option>
+        </select>
+      </div>
+    </div>
+    
+    <div class="summary-cards" style="margin-top:12px">
+      <div class="s-card">
+        <div class="sc-val green" id="salNet"></div>
+        <div class="sc-label">实发工资</div>
+      </div>
+      <div class="s-card">
+        <div class="sc-val red" id="salTax"></div>
+        <div class="sc-label">个税</div>
+      </div>
+    </div>
+
+    <div class="result-box">
+      <div class="result-row"><span>应发合计</span><span class="result-val" id="salGross"></span></div>
+      <div class="result-row"><span>社保（个人）</span><span class="result-val" id="salSoc"></span></div>
+      <div class="result-row"><span>公积金（个人）</span><span class="result-val" id="salHousAmt"></span></div>
+      <div class="result-row"><span>应纳税所得额</span><span class="result-val" id="salTaxIncome"></span></div>
+      <div class="result-row"><span>个税</span><span class="result-val red" id="salTax2"></span></div>
+      <div class="result-row" style="font-weight:700;font-size:16px"><span>实发</span><span class="result-val green" id="salNet2"></span></div>
+      <div class="chart-bar" style="margin-top:12px">
+        <div class="bar-cyan" id="salBarNet" style="width:70%"></div>
+        <div class="bar-red" id="salBarTax" style="width:10%"></div>
+        <div class="bar-blue" id="salBarSoc" style="width:20%"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--sub);margin-top:4px">
+        <span style="display:flex;align-items:center;gap:3px">■ 到手</span>
+        <span style="display:flex;align-items:center;gap:3px">■ 个税</span>
+        <span style="display:flex;align-items:center;gap:3px">■ 社保公积金</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function $(id){return document.getElementById(id)}
+
+function switchTab(i){
+  document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('active',j===i))
+  document.querySelectorAll('.panel').forEach((p,j)=>p.classList.toggle('active',j===i))
+  if(i===0)calcTax();
+  if(i===1)calcInvoice();
+  if(i===2)calcRecon();
+  if(i===3)calcSalary();
+}
+
+// ========= 个税 =========
+function getTaxBracket(monthlyIncome){
+  const annual=monthlyIncome*12;
+  if(annual<=36000)return{rate:0.03,deduction:0};
+  if(annual<=144000)return{rate:0.10,deduction:2520};
+  if(annual<=300000)return{rate:0.20,deduction:16920};
+  if(annual<=420000)return{rate:0.25,deduction:31920};
+  if(annual<=660000)return{rate:0.30,deduction:52920};
+  if(annual<=960000)return{rate:0.35,deduction:85920};
+  return{rate:0.45,deduction:181920};
+}
+
+function calcTax(){
+  const salary=parseFloat($('taxSalary').value)||0;
+  const base=parseFloat($('taxBase').value)||salary;
+  const housingRate=parseInt($('taxHousing').value)/100;
+  const extra=parseInt($('taxExtra').value)||0;
+  
+  const socialBase=base;
+  const social=socialBase*(0.08+0.02+0.005);
+  const housing=socialBase*housingRate;
+  const threshold=5000;
+  const taxable=Math.max(0,salary-social-housing-threshold-extra);
+  const bracket=getTaxBracket(taxable);
+  const monthlyTax=Math.max(0,taxable*bracket.rate-bracket.deduction/12);
+  const yearTax=monthlyTax*12;
+  const after=salary-social-housing-monthlyTax;
+  const yearAfter=after*12;
+  
+  $('taxBefore').textContent='¥'+salary.toLocaleString();
+  $('taxSocial').textContent='¥'+social.toFixed(2);
+  $('taxHousingAmt').textContent='¥'+housing.toFixed(2);
+  $('taxIncome').textContent='¥'+taxable.toFixed(2);
+  $('taxRate').textContent=(bracket.rate*100).toFixed(0)+'%';
+  $('taxDeduction').textContent='¥'+(bracket.deduction/12).toFixed(2)+'/月';
+  $('taxMonthly').textContent='¥'+monthlyTax.toFixed(2);
+  $('taxAfter').textContent='¥'+after.toFixed(2);
+  $('taxYear').textContent='¥'+yearTax.toFixed(2);
+  $('taxYearAfter').textContent='¥'+yearAfter.toFixed(2);
+  $('taxResult').style.display='block';
+}
+
+function calcBonus(){
+  const bonus=parseFloat($('bonusAmt').value)||0;
+  const monthly=bonus/12;
+  const bracket=getTaxBracket(monthly);
+  const aloneTax=bonus*bracket.rate-bracket.deduction;
+  const salary=parseFloat($('taxSalary').value)||0;
+  const mergeTax=(salary*12+bonus)*0.15;
+  
+  $('bonusAlone').textContent='¥'+aloneTax.toFixed(2);
+  $('bonusAloneAfter').textContent='¥'+(bonus-aloneTax).toFixed(2);
+  $('bonusMerge').textContent='¥'+mergeTax.toFixed(2)+' (预估)';
+  $('bonusRecommend').textContent=aloneTax<mergeTax?'单独计税更省':'并入综合所得更省';
+  $('bonusResult').style.display='block';
+}
+
+// ========= 发票税 =========
+function calcInvoice(){
+  const amount=parseFloat($('invAmount').value)||0;
+  const rate=parseInt($('invType').value)/100;
+  const exTax=amount/(1+rate);
+  const tax=amount-exTax;
+  
+  $('invTotal').textContent='¥'+amount.toLocaleString();
+  $('invRate').textContent=(rate*100).toFixed(0)+'%';
+  $('invExTax').textContent='¥'+exTax.toFixed(2);
+  $('invTax').textContent='¥'+tax.toFixed(2);
+  $('invExTax2').textContent='¥'+exTax.toFixed(2);
+  $('invTax2').textContent='¥'+tax.toFixed(2);
+  $('invFormula').textContent=amount+'÷(1+'+rate+')='+exTax.toFixed(2);
+  $('invResult').style.display='block';
+}
+
+function calcInvoiceBatch(){
+  const raw=$('invBatch').value.trim();
+  if(!raw){$('invBatchResult').style.display='none';return}
+  const lines=raw.split('\n').filter(l=>l.trim());
+  let total=0,exTotal=0,taxTotal=0;
+  lines.forEach(l=>{
+    const parts=l.split(',');
+    const amt=parseFloat(parts[0])||0;
+    const rate=(parseInt(parts[1])||13)/100;
+    const ex=amt/(1+rate);
+    total+=amt;exTotal+=ex;taxTotal+=amt-ex;
+  });
+  $('invCount').textContent=lines.length+' 张';
+  $('invBatchTotal').textContent='¥'+total.toFixed(2);
+  $('invBatchExTax').textContent='¥'+exTotal.toFixed(2);
+  $('invBatchTax').textContent='¥'+taxTotal.toFixed(2);
+  $('invBatchResult').style.display='block';
+}
+
+function calcQuote(){
+  const before=parseFloat($('quoteBefore').value)||0;
+  const rate=parseInt($('quoteRate').value)/100;
+  const after=before*(1+rate);
+  $('quoteAfter').textContent='¥'+after.toFixed(2);
+  $('quoteBeforeVal').textContent='¥'+before.toFixed(2);
+  $('quoteAdded').textContent='¥'+(after-before).toFixed(2);
+  $('quoteResult').style.display='block';
+}
+
+// ========= 对账 =========
+function calcRecon(){
+  const sysRaw=$('reconSys').value.trim();
+  const bankRaw=$('reconBank').value.trim();
+  if(!sysRaw||!bankRaw){$('reconResult').style.display='none';return}
+  
+  const sys=sysRaw.split('\n').map(s=>parseFloat(s.trim())).filter(n=>!isNaN(n)).sort((a,b)=>a-b);
+  const bank=bankRaw.split('\n').map(s=>parseFloat(s.trim())).filter(n=>!isNaN(n)).sort((a,b)=>a-b);
+  
+  let match=0,diff=0,onlySys=0,onlyBank=0;
+  let rows=[];
+  let i=0,j=0;
+  while(i<sys.length&&j<bank.length){
+    if(sys[i]===bank[j]){
+      rows.push({sys:sys[i],bank:bank[j],status:'match'});
+      match++;i++;j++;
+    }else if(sys[i]<bank[j]){
+      rows.push({sys:sys[i],bank:'—',status:'onlySys'});
+      onlySys++;i++;
+    }else{
+      rows.push({sys:'—',bank:bank[j],status:'onlyBank'});
+      onlyBank++;j++;
+    }
+  }
+  while(i<sys.length){rows.push({sys:sys[i],bank:'—',status:'onlySys'});onlySys++;i++}
+  while(j<bank.length){rows.push({sys:'—',bank:bank[j],status:'onlyBank'});onlyBank++;j++}
+  
+  const diffCount=onlySys+onlyBank;
+  $('reconMatch').textContent=match;
+  $('reconDiff').textContent=diffCount;
+  $('reconOnlySys').textContent=onlySys;
+  $('reconOnlyBank').textContent=onlyBank;
+  
+  let html='<tr><th>系统</th><th>银行/支付宝</th><th>状态</th></tr>';
+  rows.forEach(r=>{
+    let statusCls=r.status==='match'?'ok':'diff';
+    let statusTxt=r.status==='match'?'✓ 匹配':r.status==='onlySys'?'⚠ 仅系统':'⚠ 仅银行';
+    html+=`<tr><td>¥${typeof r.sys==='number'?r.sys.toFixed(2):r.sys}</td><td>¥${typeof r.bank==='number'?r.bank.toFixed(2):r.bank}</td><td class="${statusCls}">${statusTxt}</td></tr>`;
+  });
+  $('reconTable').innerHTML=html;
+  $('reconResult').style.display='block';
+}
+
+// ========= 银行余额调节表 =========
+function calcBankRec(){
+  const bankBal=parseFloat($('bankBalance').value)||0;
+  const bookBal=parseFloat($('bookBalance').value)||0;
+  const bookRecRaw=$('bookReceived').value.trim();
+  const bookPaidRaw=$('bookPaid').value.trim();
+  
+  if(!bankBal&&!bookBal){$('bankRecResult').style.display='none';return}
+  
+  const bookRec=bookRecRaw?bookRecRaw.split('\n').map(s=>parseFloat(s.trim())).filter(n=>!isNaN(n)).reduce((a,b)=>a+b,0):0;
+  const bookPaid=bookPaidRaw?bookPaidRaw.split('\n').map(s=>parseFloat(s.trim())).filter(n=>!isNaN(n)).reduce((a,b)=>a+b,0):0;
+  
+  const bankAfter=bankBal+bookRec-bookPaid;
+  const bookAfter=bookBal;
+  
+  $('recBankBal').textContent='¥'+bankBal.toFixed(2);
+  $('recAdd1').textContent='¥'+bookRec.toFixed(2);
+  $('recSub1').textContent='¥'+bookPaid.toFixed(2);
+  $('recBankAfter').textContent='¥'+bankAfter.toFixed(2);
+  $('recBookBal').textContent='¥'+bookBal.toFixed(2);
+  $('recAdd2').textContent='¥0.00';
+  $('recSub2').textContent='¥0.00';
+  $('recBookAfter').textContent='¥'+bookAfter.toFixed(2);
+  
+  if(Math.abs(bankAfter-bookAfter)<0.01){
+    $('recMatchText').innerHTML='✅ 调节后余额一致 <span style="color:var(--green)">¥'+bankAfter.toFixed(2)+'</span>';
+  }else{
+    $('recMatchText').innerHTML='❌ 不一致，差额 <span style="color:var(--red)">¥'+(bankAfter-bookAfter).toFixed(2)+'</span>';
+  }
+  $('bankRecResult').style.display='block';
+}
+
+// ========= 工资 =========
+function calcSalary(){
+  const base=parseFloat($('salBase').value)||0;
+  const perf=parseFloat($('salPerf').value)||0;
+  const allow=parseFloat($('salAllow').value)||0;
+  const deduct=parseFloat($('salDeduct').value)||0;
+  const socBase=parseFloat($('salSocBase').value)||base;
+  const housingRate=parseInt($('salHousing').value)/100;
+  
+  const gross=base+perf+allow-deduct;
+  const soc=socBase*(0.08+0.02+0.005);
+  const hous=socBase*housingRate;
+  const taxable=Math.max(0,gross-soc-hous-5000);
+  const bracket=getTaxBracket(taxable);
+  const tax=Math.max(0,taxable*bracket.rate-bracket.deduction/12);
+  const net=gross-soc-hous-tax;
+  
+  $('salGross').textContent='¥'+gross.toFixed(2);
+  $('salSoc').textContent='¥'+soc.toFixed(2);
+  $('salHousAmt').textContent='¥'+hous.toFixed(2);
+  $('salTaxIncome').textContent='¥'+taxable.toFixed(2);
+  $('salTax').textContent='¥'+tax.toFixed(2);
+  $('salTax2').textContent='¥'+tax.toFixed(2);
+  $('salNet').textContent='¥'+net.toFixed(2);
+  $('salNet2').textContent='¥'+net.toFixed(2);
+  
+  const total=gross;
+  const netPct=total>0?(net/total*100):0;
+  const taxPct=total>0?(tax/total*100):0;
+  const socPct=total>0?((soc+hous)/total*100):0;
+  $('salBarNet').style.width=netPct+'%';
+  $('salBarTax').style.width=taxPct+'%';
+  $('salBarSoc').style.width=socPct+'%';
+}
+
+// init
+calcTax();
+</script>
+
+</body>
+</html>
