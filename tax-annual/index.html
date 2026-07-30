@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>个税汇算清缴 | 财税小冰</title>
+    <style>
+        :root {
+            --bg: #f5f6f8;
+            --card: #ffffff;
+            --primary: #2c5f8a;
+            --gold: #c49b4c;
+            --text: #2d3436;
+            --sub: #636e72;
+            --border: #e0e4e8;
+            --danger: #d63031;
+            --success: #00b894;
+            --tag-bg: #e8f0f8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", -apple-system, sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 0 0 40px 0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            background: #fff;
+            min-height: 100vh;
+            box-shadow: 0 0 30px rgba(0,0,0,0.06);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 顶部品牌条 */
+        .header {
+            background: linear-gradient(135deg, #1a3a5c 0%, #0f2847 100%);
+            padding: 20px 24px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .header .avatar-mini {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #c49b4c;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        .header .info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .header .brand {
+            font-size: 17px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        .header .sub {
+            font-size: 12px;
+            color: #b0c8e0;
+            letter-spacing: 0.5px;
+        }
+
+        /* 进度条 */
+        .progress-bar {
+            display: flex;
+            padding: 16px 24px 0;
+            gap: 6px;
+            align-items: center;
+        }
+        .progress-bar .step {
+            flex: 1;
+            height: 4px;
+            border-radius: 2px;
+            background: #e0e4e8;
+            transition: all 0.3s;
+        }
+        .progress-bar .step.active {
+            background: var(--gold);
+        }
+        .progress-bar .step.done {
+            background: var(--success);
+        }
+
+        /* 卡片区域 */
+        .card-area {
+            padding: 20px 24px;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 24px 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+            border: 1px solid var(--border);
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .card-desc {
+            font-size: 13px;
+            color: var(--sub);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        /* 输入框 */
+        .input-group {
+            margin-bottom: 16px;
+        }
+        .input-group label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+        .input-group label .icon {
+            font-size: 18px;
+        }
+        .input-group .hint {
+            font-size: 11px;
+            color: #999;
+            font-weight: 400;
+            margin-left: 4px;
+        }
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 16px;
+            color: var(--text);
+            background: #fafbfc;
+            transition: all 0.2s;
+            font-family: inherit;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: var(--gold);
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(196, 155, 76, 0.08);
+        }
+        .input-group select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M6 8L1 3h10z' fill='%23636e72'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            padding-right: 40px;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 12px;
+        }
+        .input-row .input-group {
+            flex: 1;
+        }
+
+        /* 按钮 */
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 14px;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #c49b4c, #a67c3a);
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(196, 155, 76, 0.3);
+        }
+        .btn-primary:active {
+            transform: scale(0.97);
+            box-shadow: 0 2px 8px rgba(196, 155, 76, 0.2);
+        }
+        .btn-outline {
+            background: #fff;
+            color: var(--primary);
+            border: 2px solid var(--border);
+            margin-top: 8px;
+        }
+
+        /* 结果卡片 */
+        .result-card {
+            background: linear-gradient(135deg, #f8fafb 0%, #eef3f7 100%);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            border: 2px solid #dce4ec;
+        }
+        .result-card .big-number {
+            font-size: 48px;
+            font-weight: 900;
+            color: var(--primary);
+            letter-spacing: -1px;
+        }
+        .result-card .big-number.red {
+            color: var(--danger);
+        }
+        .result-card .unit {
+            font-size: 16px;
+            color: var(--sub);
+            margin-left: 4px;
+        }
+        .result-card .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-top: 1px solid #e8ecf0;
+            font-size: 14px;
+            color: var(--sub);
+            margin-top: 8px;
+        }
+        .result-card .detail-row span:last-child {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        /* 快捷扣除选择 */
+        .quick-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 4px;
+        }
+        .quick-tag {
+            padding: 10px 16px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #fff;
+            color: var(--text);
+            user-select: none;
+            white-space: nowrap;
+        }
+        .quick-tag.selected {
+            border-color: var(--gold);
+            background: #fdf8f0;
+            color: #8b6914;
+            font-weight: 600;
+        }
+
+        /* 隐藏 */
+        .hidden {
+            display: none !important;
+        }
+
+        /* toast */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2d3436;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            z-index: 999;
+            animation: fadeInOut 2s ease;
+            pointer-events: none;
+        }
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+            15% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            85% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        @media (max-width: 400px) {
+            .card { padding: 18px 14px; }
+            .input-row { flex-direction: column; gap: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="app">
+        <!-- 头部 -->
+        <div class="header">
+            <div class="avatar-mini">👨‍💼</div>
+            <div class="info">
+                <span class="brand">财税小冰</span>
+                <span class="sub">个税汇算清缴 · 一站式工具</span>
+            </div>
+        </div>
+
+        <!-- 进度条 -->
+        <div class="progress-bar" id="progressBar">
+            <div class="step active" id="step1"></div>
+            <div class="step" id="step2"></div>
+            <div class="step" id="step3"></div>
+        </div>
+
+        <!-- 步骤1：收入填写 -->
+        <div class="card-area" id="screen1">
+            <div class="card">
+                <div class="card-title">💼 第一步：填收入</div>
+                <div class="card-desc">填写你2025年度的综合所得收入（税前）</div>
+
+                <div class="input-group">
+                    <label>💰 全年工资薪金收入 <span class="hint">（必填）</span></label>
+                    <input type="number" id="salary" placeholder="例如：180000" value="" step="1000">
+                </div>
+
+                <div class="input-group">
+                    <label>📝 全年劳务报酬 <span class="hint">（没有填0）</span></label>
+                    <input type="number" id="labor" placeholder="例如：20000" value="0" step="1000">
+                </div>
+
+                <div class="input-group">
+                    <label>✍️ 全年稿酬 <span class="hint">（没有填0）</span></label>
+                    <input type="number" id="author" placeholder="例如：5000" value="0" step="1000">
+                </div>
+
+                <div class="input-group">
+                    <label>🏷️ 全年特许权使用费 <span class="hint">（没有填0）</span></label>
+                    <input type="number" id="royalty" placeholder="例如：3000" value="0" step="1000">
+                </div>
+
+                <button class="btn btn-primary" onclick="goStep2()">
+                    下一步：填扣除项 →
+                </button>
+            </div>
+        </div>
+
+        <!-- 步骤2：扣除填写 -->
+        <div class="card-area hidden" id="screen2">
+            <div class="card">
+                <div class="card-title">📋 第二步：填扣除</div>
+                <div class="card-desc">选择你的专项附加扣除项目（可多选）</div>
+
+                <div class="input-group">
+                    <label>🏠 社保公积金个人年缴额</label>
+                    <input type="number" id="socialInsurance" placeholder="通常为工资的10.5%~22.5%" value="0" step="1000">
+                </div>
+
+                <div class="input-group">
+                    <label>📌 专项附加扣除（点击选择）</label>
+                    <div class="quick-tags" id="deductionTags">
+                        <span class="quick-tag" data-val="18000" onclick="toggleTag(this)">👶 婴幼儿照护<br><small>2.4万/孩</small></span>
+                        <span class="quick-tag" data-val="24000" onclick="toggleTag(this)">🎓 子女教育<br><small>2.4万/孩</small></span>
+                        <span class="quick-tag" data-val="36000" onclick="toggleTag(this)">👴 赡养老人<br><small>3.6万</small></span>
+                        <span class="quick-tag" data-val="18000" onclick="toggleTag(this)">🏠 住房租金<br><small>1.8万</small></span>
+                        <span class="quick-tag" data-val="12000" onclick="toggleTag(this)">🏡 住房贷款<br><small>1.2万</small></span>
+                        <span class="quick-tag" data-val="4800" onclick="toggleTag(this)">📚 继续教育<br><small>0.48万</small></span>
+                        <span class="quick-tag" data-val="0" onclick="toggleTag(this)">🏥 大病医疗<br><small>据实扣除</small></span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>🧾 其他依法扣除（年金/商业保险等）</label>
+                    <input type="number" id="otherDeduction" placeholder="没有填0" value="0" step="1000">
+                </div>
+
+                <div style="display:flex; gap:10px;">
+                    <button class="btn btn-outline" onclick="goStep1()" style="flex:1;">← 返回修改</button>
+                    <button class="btn btn-primary" onclick="goStep3()" style="flex:2;">计算应退/补税 →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 步骤3：结果 -->
+        <div class="card-area hidden" id="screen3">
+            <div class="card" style="text-align:center;">
+                <div class="card-title" style="justify-content:center;">📊 计算结果</div>
+                <div class="card-desc" style="text-align:center;">2025年度个税汇算清缴</div>
+
+                <div class="result-card" id="resultCard">
+                    <div style="font-size:13px;color:#999;margin-bottom:4px;">全年应补/退税额</div>
+                    <div class="big-number" id="resultNumber">--</div>
+                    <div class="unit" id="resultLabel"></div>
+                    <div class="detail-row">
+                        <span>全年总收入</span>
+                        <span id="detailIncome">--</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>免征额+扣除</span>
+                        <span id="detailDeduction">--</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>应纳税所得额</span>
+                        <span id="detailTaxable">--</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>全年应纳税额</span>
+                        <span id="detailTax">--</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>已预缴税额（估算）</span>
+                        <span id="detailPrepaid">--</span>
+                    </div>
+                </div>
+
+                <div id="resultTip" style="margin-top:16px; padding:14px; border-radius:12px; font-size:14px; font-weight:600;"></div>
+
+                <div style="display:flex; gap:10px; margin-top:16px;">
+                    <button class="btn btn-outline" onclick="goStep2()" style="flex:1;">← 修改数据</button>
+                    <button class="btn btn-outline" onclick="resetAll()" style="flex:1;">🔄 重新计算</button>
+                </div>
+
+                <p style="margin-top:16px; font-size:11px; color:#b0b8c0; text-align:center;">
+                    ⚠️ 结果仅供参考，实际以个税APP为准<br>
+                    关注 <strong>财税小冰</strong>，获取更多财税工具
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast hidden" id="toast"></div>
+
+    <script>
+        // 数据存储
+        let selectedDeductions = [];
+
+        // 切换标签
+        function toggleTag(el) {
+            const val = parseInt(el.dataset.val);
+            if (el.classList.contains('selected')) {
+                el.classList.remove('selected');
+                selectedDeductions = selectedDeductions.filter(v => v !== val);
+            } else {
+                el.classList.add('selected');
+                if (val > 0) selectedDeductions.push(val);
+            }
+        }
+
+        // 显示toast
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.remove('hidden');
+            setTimeout(() => t.classList.add('hidden'), 2000);
+        }
+
+        // 屏幕切换
+        function showScreen(n) {
+            document.getElementById('screen1').classList.add('hidden');
+            document.getElementById('screen2').classList.add('hidden');
+            document.getElementById('screen3').classList.add('hidden');
+            document.getElementById('screen' + n).classList.remove('hidden');
+
+            // 更新进度条
+            document.getElementById('step1').className = 'step';
+            document.getElementById('step2').className = 'step';
+            document.getElementById('step3').className = 'step';
+            if (n === 1) document.getElementById('step1').className = 'step active';
+            if (n === 2) {
+                document.getElementById('step1').className = 'step done';
+                document.getElementById('step2').className = 'step active';
+            }
+            if (n === 3) {
+                document.getElementById('step1').className = 'step done';
+                document.getElementById('step2').className = 'step done';
+                document.getElementById('step3').className = 'step active';
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function goStep1() { showScreen(1); }
+        function goStep2() {
+            const salary = parseFloat(document.getElementById('salary').value) || 0;
+            if (salary <= 0) {
+                showToast('请先填写工资收入哦~');
+                return;
+            }
+            showScreen(2);
+        }
+        function goStep3() {
+            const salary = parseFloat(document.getElementById('salary').value) || 0;
+            if (salary <= 0) {
+                showToast('请先填写工资收入~');
+                goStep1();
+                return;
+            }
+            calculate();
+            showScreen(3);
+        }
+
+        function resetAll() {
+            document.getElementById('salary').value = '';
+            document.getElementById('labor').value = '0';
+            document.getElementById('author').value = '0';
+            document.getElementById('royalty').value = '0';
+            document.getElementById('socialInsurance').value = '0';
+            document.getElementById('otherDeduction').value = '0';
+            selectedDeductions = [];
+            document.querySelectorAll('.quick-tag').forEach(t => t.classList.remove('selected'));
+            showScreen(1);
+        }
+
+        // 核心计算
+        function calculate() {
+            const salary = parseFloat(document.getElementById('salary').value) || 0;
+            const labor = parseFloat(document.getElementById('labor').value) || 0;
+            const author = parseFloat(document.getElementById('author').value) || 0;
+            const royalty = parseFloat(document.getElementById('royalty').value) || 0;
+            const socialInsurance = parseFloat(document.getElementById('socialInsurance').value) || 0;
+            const otherDeduction = parseFloat(document.getElementById('otherDeduction').value) || 0;
+
+            // 劳务报酬扣除20%费用
+            const laborTaxable = labor * 0.8;
+            // 稿酬扣除20%后再减30%
+            const authorTaxable = author * 0.8 * 0.7;
+            // 特许权使用费扣除20%
+            const royaltyTaxable = royalty * 0.8;
+
+            const totalIncome = salary + laborTaxable + authorTaxable + royaltyTaxable;
+
+            // 免征额6万
+            const basicDeduction = 60000;
+            // 专项附加扣除合计
+            const specialDeduction = selectedDeductions.reduce((a, b) => a + b, 0);
+            // 总扣除
+            const totalDeduction = basicDeduction + socialInsurance + specialDeduction + otherDeduction;
+
+            // 应纳税所得额
+            let taxableIncome = totalIncome - totalDeduction;
+            if (taxableIncome < 0) taxableIncome = 0;
+
+            // 税率表
+            function calcTax(income) {
+                if (income <= 36000) return income * 0.03;
+                if (income <= 144000) return income * 0.1 - 2520;
+                if (income <= 300000) return income * 0.2 - 16920;
+                if (income <= 420000) return income * 0.25 - 31920;
+                if (income <= 660000) return income * 0.3 - 52920;
+                if (income <= 960000) return income * 0.35 - 85920;
+                return income * 0.45 - 181920;
+            }
+
+            const annualTax = calcTax(taxableIncome);
+
+            // 估算已预缴税额（按工资收入单独计税估算）
+            const monthlySalary = salary / 12;
+            const monthlySocial = socialInsurance / 12;
+            const monthlySpecial = specialDeduction / 12;
+            const monthlyTaxable = Math.max(0, monthlySalary - 5000 - monthlySocial - monthlySpecial);
+            const monthlyTax = calcTax(monthlyTaxable * 12) / 12;
+            const estimatedPrepaid = monthlyTax * 12;
+
+            const diff = annualTax - estimatedPrepaid;
+
+            // 显示结果
+            document.getElementById('detailIncome').textContent = '¥' + totalIncome.toLocaleString('zh-CN', { maximumFractionDigits: 0 });
+            document.getElementById('detailDeduction').textContent = '¥' + totalDeduction.toLocaleString('zh-CN', { maximumFractionDigits: 0 });
+            document.getElementById('detailTaxable').textContent = '¥' + taxableIncome.toLocaleString('zh-CN', { maximumFractionDigits: 0 });
+            document.getElementById('detailTax').textContent = '¥' + annualTax.toLocaleString('zh-CN', { maximumFractionDigits: 2 });
+            document.getElementById('detailPrepaid').textContent = '¥' + estimatedPrepaid.toLocaleString('zh-CN', { maximumFractionDigits: 2 });
+
+            const resultNum = document.getElementById('resultNumber');
+            const resultLabel = document.getElementById('resultLabel');
+            const resultTip = document.getElementById('resultTip');
+
+            if (Math.abs(diff) < 10) {
+                resultNum.textContent = '¥0';
+                resultNum.className = 'big-number';
+                resultLabel.textContent = '无需补退税';
+                resultTip.textContent = '✅ 你的预缴税额和应纳税额基本一致，无需操作！';
+                resultTip.style.background = '#e6fff0';
+                resultTip.style.color = '#00a86b';
+            } else if (diff > 0) {
+                resultNum.textContent = '¥' + diff.toLocaleString('zh-CN', { maximumFractionDigits: 2 });
+                resultNum.className = 'big-number red';
+                resultLabel.textContent = '需补税';
+                resultTip.textContent = '📌 你需要在6月30日前通过个税APP完成补缴，逾期会产生滞纳金哦~';
+                resultTip.style.background = '#fff5f5';
+                resultTip.style.color = '#d63031';
+            } else {
+                resultNum.textContent = '¥' + Math.abs(diff).toLocaleString('zh-CN', { maximumFractionDigits: 2 });
+                resultNum.className = 'big-number';
+                resultNum.style.color = '#00b894';
+                resultLabel.textContent = '可退税 🎉';
+                resultTip.textContent = '🎉 恭喜！你可以申请退税，登录个税APP绑定银行卡即可到账~';
+                resultTip.style.background = '#e6fff0';
+                resultTip.style.color = '#00a86b';
+            }
+        }
+
+        // 初始化：默认显示步骤1
+        showScreen(1);
+    </script>
+</body>
+</html>
