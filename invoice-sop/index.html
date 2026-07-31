@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>发票管理SOP | 财税小冰</title>
+<style>
+:root{--bg:#0a0e14;--panel:#131820;--card:#191f2b;--border:#252d3a;--cyan:#00e5c3;--blue:#3b8bff;--red:#ff4d6a;--yellow:#ffb74d;--text:#ccd6e0;--sub:#6b7a90;--green:#45d68c}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:480px;margin:0 auto;min-height:100vh;-webkit-tap-highlight-color:transparent;padding:0 16px 100px}
+.header{padding:20px 0 12px;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:8px}
+.logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--cyan),var(--blue));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px}
+.logo h1{font-size:18px;font-weight:700}
+.version{font-size:11px;color:var(--sub);background:var(--card);padding:4px 10px;border-radius:20px}
+.card{background:var(--card);border-radius:16px;padding:18px;margin-bottom:14px;border:1px solid var(--border)}
+.card-title{font-size:14px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.step{display:flex;gap:12px;margin-bottom:14px;position:relative}
+.step-num{width:32px;height:32px;min-width:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
+.step-num.cyan{background:rgba(0,229,195,.2);color:var(--cyan)}
+.step-num.blue{background:rgba(59,139,255,.2);color:var(--blue)}
+.step-num.yellow{background:rgba(255,183,77,.2);color:var(--yellow)}
+.step-num.red{background:rgba(255,77,106,.2);color:var(--red)}
+.step-num.green{background:rgba(69,214,140,.2);color:var(--green)}
+.step-body{flex:1}
+.step-title{font-size:14px;font-weight:600;margin-bottom:3px}
+.step-desc{font-size:12px;color:var(--sub);line-height:1.6}
+.flow-arrow{width:2px;height:16px;background:var(--border);margin-left:15px;margin-bottom:6px}
+.flow-arrow.last{background:transparent}
+.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;margin-right:4px}
+.tag-r{background:rgba(255,77,106,.15);color:var(--red)}
+.tag-g{background:rgba(69,214,140,.15);color:var(--green)}
+.tag-b{background:rgba(59,139,255,.15);color:var(--blue)}
+.tag-y{background:rgba(255,183,77,.15);color:var(--yellow)}
+table{width:100%;font-size:12px;border-collapse:collapse;margin-top:8px}
+th{text-align:left;color:var(--sub);padding:6px 4px;font-weight:500;border-bottom:1px solid var(--border);font-size:11px}
+td{padding:8px 4px;border-bottom:1px solid var(--border)}
+.checklist{padding-left:16px}
+.checklist li{font-size:12px;color:var(--sub);margin-bottom:6px;line-height:1.5}
+.warn-box{background:rgba(255,77,106,.08);border:1px solid rgba(255,77,106,.2);border-radius:10px;padding:12px;margin-top:10px;font-size:12px;color:var(--red)}
+.info-box{background:rgba(59,139,255,.08);border:1px solid rgba(59,139,255,.2);border-radius:10px;padding:12px;margin-top:10px;font-size:12px;color:var(--blue)}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">
+    <div class="logo-icon">🧾</div>
+    <h1>发票管理SOP</h1>
+  </div>
+  <span class="version">v1.0</span>
+</div>
+
+<!-- 发票整理完整流程 -->
+<div class="card">
+  <div class="card-title">📋 发票整理完整流程</div>
+
+  <div class="step">
+    <div class="step-num cyan">1</div>
+    <div class="step-body">
+      <div class="step-title">收集</div>
+      <div class="step-desc">收到发票马上放固定位置（桌面文件盒/发票夹）。各类分开：<span class="tag tag-b">进项</span><span class="tag tag-r">销项</span><span class="tag tag-y">费用</span>每天下班前统一归位，不堆超过3天。</div>
+    </div>
+  </div>
+  <div class="flow-arrow"></div>
+  <div class="step">
+    <div class="step-num blue">2</div>
+    <div class="step-body">
+      <div class="step-title">核对</div>
+      <div class="step-desc">三要素核查：<b>发票抬头</b>（税号一个字不能错）、<b>金额</b>（与采购单/合同一致）、<b>税率</b>（该用13%还是6%看业务实质）。错的立刻退回供应商。</div>
+    </div>
+  </div>
+  <div class="flow-arrow"></div>
+  <div class="step">
+    <div class="step-num yellow">3</div>
+    <div class="step-body">
+      <div class="step-title">登记</div>
+      <div class="step-desc">登记到发票台账：发票号码、开票日期、对方名称、金额、税额、发票类型。纸质发票右上角写登记序号，电子发票存到命名规范的文件夹。</div>
+    </div>
+  </div>
+  <div class="flow-arrow"></div>
+  <div class="step">
+    <div class="step-num green">4</div>
+    <div class="step-body">
+      <div class="step-title">认证/勾选</div>
+      <div class="step-desc">进项发票登录电子税务局→税务数字账户→勾选认证。每月月末前完成，逾期进项转出不能抵扣。<span class="tag tag-r">重点</span></div>
+    </div>
+  </div>
+  <div class="flow-arrow last"></div>
+  <div class="step">
+    <div class="step-num red">5</div>
+    <div class="step-body">
+      <div class="step-title">归档</div>
+      <div class="step-desc">纸质发票按月装订，电子发票按月建文件夹（格式：2026-07进项/销项/费用）。申报表与发票台账核对一致后存档，保留至少5年。</div>
+    </div>
+  </div>
+</div>
+
+<!-- 数电票操作 -->
+<div class="card">
+  <div class="card-title">⚡ 数电票（全电发票）操作指南</div>
+
+  <table>
+    <tr><th>操作</th><th>怎么做</th><th>注意</th></tr>
+    <tr><td>接收</td><td>登录电子税务局→税务数字账户→全量发票查询→下载</td><td>PDF/XML都要存，XML是原件</td></tr>
+    <tr><td>查验</td><td>全国增值税发票查验平台，或电子税务局自动验真</td><td>数电票自动验真，老式发票手动输入查验</td></tr>
+    <tr><td>入账</td><td>下载XML→导入财务软件→生成凭证</td><td>数电票不用盖章，电子签名等同法律效力</td></tr>
+    <tr><td>红冲</td><td>开票方在电子税务局发起红字确认单→购方确认→开具红字发票</td><td>当月可作废，跨月必须红冲</td></tr>
+    <tr><td>归档</td><td>XML格式保存，按月分类存硬盘+云盘双备份</td><td>必须留XML原件，PDF打印件不算合规存档</td></tr>
+  </table>
+
+  <div class="info-box">
+    💡 数电票跟纸质票最大区别：不用领票、不用盖章、不用邮寄。开票在电子税务局点几下就完事，对方那边实时收到。
+  </div>
+</div>
+
+<!-- 发票台账模板 -->
+<div class="card">
+  <div class="card-title">📊 发票登记台账模板</div>
+  <table>
+    <tr><th>序号</th><th>发票号码</th><th>开票日期</th><th>对方名称</th><th>金额</th><th>税额</th><th>类型</th><th>认证状态</th></tr>
+    <tr><td>1</td><td>25302000000012345678</td><td>2026-07-01</td><td>阿里巴巴</td><td>1,130.00</td><td>130.00</td><td><span class="tag tag-b">进项13%</span></td><td><span class="tag tag-g">已认证</span></td></tr>
+    <tr><td>2</td><td>25302000000012345679</td><td>2026-07-03</td><td>鑫盛五金</td><td>530.00</td><td>30.00</td><td><span class="tag tag-b">进项6%</span></td><td><span class="tag tag-y">待认证</span></td></tr>
+    <tr><td>3</td><td>空</td><td>2026-07-05</td><td>戴姆克客户</td><td>2,260.00</td><td>260.00</td><td><span class="tag tag-r">销项13%</span></td><td>—</td></tr>
+  </table>
+</div>
+
+<!-- 避坑 -->
+<div class="card">
+  <div class="card-title">⚠️ 发票管理常见坑</div>
+  <ul class="checklist">
+    <li>❌ 发票收到随手塞抽屉，月底找不到一半 → 当天收到当天归位登记</li>
+    <li>❌ 数电票只存PDF没存XML → 税务查账不认PDF，必须XML</li>
+    <li>❌ 进项票忘了月末前勾选认证 → 次月发现已过期，进项不能抵扣</li>
+    <li>❌ 发票抬头税号错一个字 → 整张票作废，重开耽误付款</li>
+    <li>❌ 红冲发票没及时处理 → 进项转出忘了做，税务比对异常</li>
+  </ul>
+  <div class="warn-box">
+    ⚠️ 制造业常见问题：1688采购发票量多金额小，容易漏登记。解决：每周五固定时间统一处理1688发票，单独建"1688发票"子文件夹。
+  </div>
+</div>
+
+</body>
+</html>
