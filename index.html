@@ -6,17 +6,17 @@
 <title>AI 财务工作台</title>
 <style>
 :root {
-  --bg: #0a0e14;
-  --panel: #131820;
-  --card: #191f2b;
-  --border: #252d3a;
-  --cyan: #00e5c3;
-  --blue: #3b8bff;
-  --red: #ff4d6a;
-  --yellow: #ffb74d;
-  --text: #ccd6e0;
-  --sub: #6b7a90;
-  --green: #45d68c;
+  --bg: #faf8f5;
+  --panel: #f5f2ed;
+  --card: #fff;
+  --border: #e8e3db;
+  --cyan: #0d9488;
+  --blue: #2563eb;
+  --red: #dc2626;
+  --yellow: #d97706;
+  --text: #3d3835;
+  --sub: #8c8580;
+  --green: #16a34a;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{
@@ -270,6 +270,7 @@ input:focus,select:focus{border-color:var(--cyan)}
   <button class="tab" onclick="switchTab(1)">🧾 发票税</button>
   <button class="tab" onclick="switchTab(2)">📊 对账</button>
   <button class="tab" onclick="switchTab(3)">💳 工资表</button>
+  <button class="tab" onclick="switchTab(4)">🧾 发票SOP</button>
 </div>
 
 <!-- TAB 0: 个税计算器 -->
@@ -547,6 +548,64 @@ input:focus,select:focus{border-color:var(--cyan)}
         <span style="display:flex;align-items:center;gap:3px">■ 个税</span>
         <span style="display:flex;align-items:center;gap:3px">■ 社保公积金</span>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 4: 发票SOP -->
+<div class="panel" id="panel4">
+  <div class="card">
+    <div class="card-title">📋 发票整理完整流程</div>
+    <div style="display:flex;gap:12px;margin-bottom:14px">
+      <div style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;background:rgba(13,148,136,.15);color:var(--cyan);flex-shrink:0">1</div>
+      <div><div style="font-size:14px;font-weight:600;margin-bottom:3px">收集</div><div style="font-size:12px;color:var(--sub)">收到发票马上放固定位置。分类：进项 销项 费用。不堆超过3天。</div></div>
+    </div>
+    <div style="width:2px;height:14px;background:var(--border);margin-left:15px;margin-bottom:6px"></div>
+    <div style="display:flex;gap:12px;margin-bottom:14px">
+      <div style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;background:rgba(37,99,235,.15);color:var(--blue);flex-shrink:0">2</div>
+      <div><div style="font-size:14px;font-weight:600;margin-bottom:3px">核对</div><div style="font-size:12px;color:var(--sub)">三要素：发票抬头（税号不能错）、金额（与采购单一致）、税率（按业务实质）。错的退回供应商。</div></div>
+    </div>
+    <div style="width:2px;height:14px;background:var(--border);margin-left:15px;margin-bottom:6px"></div>
+    <div style="display:flex;gap:12px;margin-bottom:14px">
+      <div style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;background:rgba(217,119,6,.15);color:var(--yellow);flex-shrink:0">3</div>
+      <div><div style="font-size:14px;font-weight:600;margin-bottom:3px">登记</div><div style="font-size:12px;color:var(--sub)">登记到发票台账：发票号码、开票日期、对方名称、金额、税额。纸质票右上角写登记序号。</div></div>
+    </div>
+    <div style="width:2px;height:14px;background:var(--border);margin-left:15px;margin-bottom:6px"></div>
+    <div style="display:flex;gap:12px;margin-bottom:14px">
+      <div style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;background:rgba(22,163,74,.15);color:var(--green);flex-shrink:0">4</div>
+      <div><div style="font-size:14px;font-weight:600;margin-bottom:3px">认证/勾选</div><div style="font-size:12px;color:var(--sub)">进项票登录电子税务局→税务数字账户→勾选认证。每月月末前完成，逾期进项转出。</div></div>
+    </div>
+    <div style="display:flex;gap:12px">
+      <div style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;background:rgba(220,38,38,.15);color:var(--red);flex-shrink:0">5</div>
+      <div><div style="font-size:14px;font-weight:600;margin-bottom:3px">归档</div><div style="font-size:12px;color:var(--sub)">纸质发票按月装订，电子发票按月建文件夹。申报表与台账核对一致，保留至少5年。</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">⚡ 数电票操作指南</div>
+    <table style="width:100%;font-size:12px;border-collapse:collapse">
+      <tr><th style="text-align:left;color:var(--sub);padding:6px 4px;font-weight:500;border-bottom:1px solid var(--border)">操作</th><th style="text-align:left;color:var(--sub);padding:6px 4px;font-weight:500;border-bottom:1px solid var(--border)">怎么做</th><th style="text-align:left;color:var(--sub);padding:6px 4px;font-weight:500;border-bottom:1px solid var(--border)">注意</th></tr>
+      <tr><td style="padding:8px 4px;border-bottom:1px solid var(--border)">接收</td><td style="padding:8px 4px;border-bottom:1px solid var(--border)">电子税务局→税务数字账户→全量发票查询→下载</td><td style="padding:8px 4px;border-bottom:1px solid var(--border)">PDF/XML都存，XML是原件</td></tr>
+      <tr><td style="padding:8px 4px;border-bottom:1px solid var(--border)">查验</td><td style="padding:8px 4px;border-bottom:1px solid var(--border)">全国增值税发票查验平台</td><td style="padding:8px 4px;border-bottom:1px solid var(--border)">数电票自动验真</td></tr>
+      <tr><td style="padding:8px 4px;border-bottom:1px solid var(--border)">入账</td><td style="padding:8px 4px;border-bottom:1px solid var(--border)">下载XML→导入财务软件→生成凭证</td><td style="padding:8px 4px;border-bottom:1px solid var(--border)">不用盖章，电子签名等同法律效力</td></tr>
+      <tr><td style="padding:8px 4px;border-bottom:1px solid var(--border)">红冲</td><td style="padding:8px 4px;border-bottom:1px solid var(--border)">电子税务局发起红字确认单→购方确认→开红字票</td><td style="padding:8px 4px;border-bottom:1px solid var(--border)">当月作废，跨月红冲</td></tr>
+      <tr><td style="padding:8px 4px">归档</td><td style="padding:8px 4px">XML保存，按月分类存硬盘+云盘</td><td style="padding:8px 4px">必须留XML原件，PDF打印件不算合规</td></tr>
+    </table>
+    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:12px;margin-top:10px;font-size:12px;color:var(--blue)">
+      💡 数电票跟纸质票最大区别：不用领票、不用盖章、不用邮寄。开票在电子税务局点几下就行。
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">⚠️ 常见坑</div>
+    <ul style="padding-left:16px;font-size:12px;color:var(--sub);line-height:1.8">
+      <li>发票收到随手塞抽屉，月底找不到一半</li>
+      <li>数电票只存PDF没存XML → 税务查账不认</li>
+      <li>进项票忘了月末前勾选 → 次月过期不能抵扣</li>
+      <li>发票抬头税号错一个字 → 整张票作废</li>
+    </ul>
+    <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:12px;margin-top:10px;font-size:12px;color:var(--red)">
+      ⚠️ 制造业：1688采购发票量多金额小，每周五固定时间统一处理，单独建"1688发票"文件夹。
     </div>
   </div>
 </div>
