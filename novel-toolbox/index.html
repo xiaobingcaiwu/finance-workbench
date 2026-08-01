@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>AI小说写作工具箱</title>
+<style>
+:root{--bg:#faf8f5;--card:#fff;--border:#e8e3db;--cyan:#0d9488;--blue:#2563eb;--red:#dc2626;--yellow:#d97706;--green:#16a34a;--text:#3d3835;--sub:#8c8580}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:480px;margin:0 auto;min-height:100vh;padding:0 16px 100px}
+.top-bar{position:sticky;top:0;background:var(--bg);padding:14px 0 8px;z-index:10}
+.top-bar h1{font-size:20px;font-weight:800}
+.top-bar .sub{font-size:12px;color:var(--sub);margin-top:2px}
+.tags{display:flex;gap:6px;overflow-x:auto;padding:8px 0;scrollbar-width:none}
+.tags::-webkit-scrollbar{display:none}
+.tag-btn{flex-shrink:0;padding:7px 14px;border-radius:18px;font-size:13px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;white-space:nowrap;transition:all .2s}
+.tag-btn.active{background:var(--cyan);color:#fff;border-color:var(--cyan)}
+.card{background:var(--card);border-radius:14px;padding:16px;margin-bottom:10px;border:1px solid var(--border)}
+.card-title{font-size:15px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.prompt-box{background:#f5f2ed;border-radius:10px;padding:12px;font-size:13px;line-height:1.7;margin-bottom:8px;position:relative;white-space:pre-wrap}
+.copy-btn{position:absolute;top:8px;right:8px;background:var(--cyan);color:#fff;border:none;border-radius:14px;padding:4px 12px;font-size:11px;cursor:pointer;font-weight:600}
+.copy-btn.copied{background:var(--green)}
+.prompt-label{font-size:11px;color:var(--sub);margin-bottom:3px;font-weight:600}
+.banner{background:linear-gradient(135deg,var(--cyan),var(--blue));color:#fff;border-radius:14px;padding:16px;margin-bottom:14px;text-align:center}
+.banner h2{font-size:18px;margin-bottom:4px}
+.banner p{font-size:13px;opacity:.9}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <h1>✍️ AI小说写作工具箱</h1>
+  <div class="sub">番茄/知乎/七猫 短篇网文提示词 · 点一下复制</div>
+</div>
+
+<div class="tags" id="tags">
+  <button class="tag-btn active" onclick="filter('all')">全部</button>
+  <button class="tag-btn" onclick="filter('番茄')">🍅 番茄</button>
+  <button class="tag-btn" onclick="filter('知乎')">📖 知乎</button>
+  <button class="tag-btn" onclick="filter('大纲')">📋 大纲人设</button>
+  <button class="tag-btn" onclick="filter('爽点')">🔥 爽点节奏</button>
+</div>
+
+<div class="banner">
+  <h2>🎁 财务人福利</h2>
+  <p>个税计算器 · 发票税额 · 对账工具<br>→ <u onclick="location.href='https://xiaobingcaiwu.github.io/finance-workbench/'" style="cursor:pointer">点这里免费使用</u></p>
+</div>
+
+<div id="prompts"></div>
+
+<script>
+const prompts=[
+  // 番茄
+  {tag:'番茄',title:'番茄女频短篇（甜虐）',label:'第一人称+情绪流+6000-8000字',text:'你是一位番茄小说女频短篇作者。请写一篇[题材，如古风甜虐/豪门逆袭]短篇，6000-8000字。要求：第一人称沉浸式叙述，开头300字直接抛冲突和悬念，不铺垫背景；每500字一个情绪炸弹（反转/打脸/虐点）；结尾留强钩子引读者收藏加书架。语言口语化接地气，短句为主，段落短。'},
+  {tag:'番茄',title:'番茄追妻火葬场',label:'前虐后爽+男主觉醒四阶段',text:'请写一篇番茄追妻火葬场短篇（7000字）。女主前期卑微付出，男主把她当挂件毫不在意，后期男主觉醒开始追悔。要求：①开篇200字直接上矛盾，不介绍人设不渲染环境 ②虐点层层升级（精神PUA→尊严践踏→玩命作死）③男主火葬场四阶段：自以为是→尊严扫地→绝望赎罪→孤独终老 ④每千字一个看点（反转/冲突/打脸/拉扯）⑤结尾女主不轻易原谅，留系列化钩子。'},
+  {tag:'番茄',title:'番茄假千金逆袭',label:'真假千金+户口本拍桌+豪门爽文',text:'写一篇番茄假千金逆袭爽文短篇（6000-8000字）。核心梗：真假千金调包反转+户口本拍桌。要求：下沉市场调性、通俗爽快、不文艺不铺垫；第一人称"我"视角，语气直接不憋屈；前300字冲突前置；每500字一次反转或打脸；结尾抛新悬念引加书架。'},
+  {tag:'番茄',title:'番茄短故事投稿模板',label:'6000字签约门槛+强钩子结尾',text:'你是番茄短故事平台编辑，帮我写一篇投稿用的短故事（6000-7000字，必须过签约门槛）。要求：书名吸量、黄金三秒开头（15秒内不流失）、中段节奏密不透风、结尾强钩子引加书架。题材：[填入题材]。风格下沉通俗，爽快直接。'},
+  
+  // 知乎
+  {tag:'知乎',title:'知乎盐选第一人称短篇',label:'回答体开头+转折驱动+顺滑',text:'你是一位知乎盐选作者。请以知乎回答体写一篇盐选短篇（5000-8000字）。特点：没文笔、流畅、无描写、情绪够、就是顺；靠转折点与冲突驱动，不靠情绪描写堆砌；对话独立成段；第一人称沉浸。开头用"我X岁那年..."或"事情要从XX说起"式回答体引入。题材：[填入题材]。'},
+  {tag:'知乎',title:'知乎穿书/重生文',label:'系统+金手指+快节奏反转',text:'写一篇知乎穿书/重生题材短篇（6000字）。开局主角发现自己穿进[书中世界/前世]，带金手指[具体金手指]。要求：开头300字完成穿越+第一个冲突；中间剧情+对话交替推进；快节奏反转（打破预期、信息差打脸）；结尾抛新悬念。第一人称内心OS密集，带自嘲幽默感。'},
+  {tag:'知乎',title:'知乎古风甜虐',label:'盐选调性+甜虐交织+强情绪',text:'写一篇知乎盐选古风甜虐短篇（6000-8000字）。核心：甜+虐双重赛道。要求：第一人称"我"，开篇定核梗（差别对待/背叛/断崖离开）；情绪起伏是重点——前70%憋屈铺垫、中20%反转、后10%余韵；每300字一个小情绪高潮；对话简短有力；结尾留白不强行圆满。'},
+  {tag:'知乎',title:'知乎回答体开头模板',label:'黄金三秒+悬念钩子',text:'请生成10个知乎盐选回答体开头模板（每个50字内），题材[言情/悬疑/现实]。要求：黄金三秒钩子（第一句就冲突/悬念/反常识）；回答体自然（"我X岁那年""事情要从XX说起"）；可套任意剧情。'},
+  
+  // 大纲人设
+  {tag:'大纲',title:'小说大纲一键生成',label:'主线+分卷+每章钩子',text:'请为[题材/梗概]生成完整小说大纲。包含：①核心梗（一句话说清）②主角设定（性格/目标/障碍/行为逻辑）③主要配角（人设/作用）④分卷大纲（每卷目标+关键情节+情绪走向）⑤每卷章末钩子。要求逻辑自洽，冲突层层升级。'},
+  {tag:'大纲',title:'女主设定模板',label:'表面标签vs真相标签',text:'为[题材]设计女主。格式：①表面标签（别人看到的）②真相标签（实际是）③性格底色（本质是什么人）④核心目标（她要什么）⑤最大障碍（谁/什么挡路）⑥底线（什么绝对不能碰）⑦过往经历（塑造性格的关键事件）⑧行为逻辑（遇事第一反应）。反差越大戏剧张力越强。'},
+  {tag:'大纲',title:'男主设定模板（火葬场专用）',label:'盲盒属性+觉醒四阶段',text:'为追妻火葬场文设计男主。格式：①表面人设（霸道/冷漠/多金）②盲盒属性（眼瞎心瞎把女主当挂件）③痛点成因（为什么是他——合理动机拒绝为虐而虐）④觉醒触发点（哪件事让他意识到失去）⑤火葬场四阶段（自以为是→尊严扫地→绝望赎罪→孤独终老）⑥最终结局（女主不轻易原谅）。'},
+  {tag:'大纲',title:'核心配角速成',label:'反派要有动机有手段',text:'为[题材]设计3个配角：①核心反派（动机+手段+层次，不做哭闹工具人）②递刀子女配（怎么给女主使绊子）③关键家人/盟友（作用+情感价值）。每个配角100字内，要能推动主线冲突。'},
+  
+  // 爽点
+  {tag:'爽点',title:'爽点节奏设计器',label:'憋屈→爆发曲线+三层压力',text:'请为[题材]设计全篇爽点节奏。要求：①憋屈铺垫阶段（前70%，每500字一个情绪点）②反转爆发阶段（中20%，一次比一次狠）③余韵阶段（后10%，留白）④打脸要"马上/延迟"两种配合 ⑤每章末留钩子。标注每个爽点的情绪落点。'},
+  {tag:'爽点',title:'每500字情绪炸弹模板',label:'三层反转+意料之外情理之中',text:'请为[剧情阶段]设计3个情绪炸弹。每个炸弹要求：①打破预期（主角才是棋手）②推翻认知（世界是假的/真相反转）③情绪核弹（读者情绪被掀动）④意料之外情理之中。标注每个炸弹放在哪个剧情位置、用什么细节引爆。'},
+  {tag:'爽点',title:'黄金三秒开头生成器',label:'前300字不铺垫直接上冲突',text:'请为[题材+核心梗]生成5个黄金三秒开头（每个100-300字）。要求：第一段抛冲突/悬念/反常识，不介绍人设不渲染环境；前1000字完成第一次小冲突+反转+危机；前3000字明确目标/阻碍/主线。'},
+  {tag:'爽点',title:'章末钩子五连发',label:'五种钩子轮流用',text:'请为[剧情阶段]设计5种章末钩子：①信息钩子（给答案造更大问号）②情绪钩子（段尾情绪转折）③动作钩子（停在动作中断点）④身份钩子（谁是谁的秘密）⑤危机钩子（危险逼近倒计时）。每种50字示例，可直接套用。'},
+];
+
+function render(list){
+  let html='';
+  list.forEach((p,i)=>{
+    html+=`<div class="card">
+      <div class="card-title">${p.title}</div>
+      <div class="prompt-label">${p.label}</div>
+      <div class="prompt-box"><button class="copy-btn" onclick="copyPrompt(${i},this)">📋 复制</button>${p.text}</div>
+    </div>`;
+  });
+  document.getElementById('prompts').innerHTML=html||'<div style="text-align:center;padding:40px;color:var(--sub)">没有匹配的提示词</div>';
+}
+
+function filter(tag){
+  document.querySelectorAll('.tag-btn').forEach(b=>b.classList.toggle('active',b.textContent.includes(tag)||(tag==='all'&&b.textContent.includes('全部'))));
+  window.filtered=tag==='all'?prompts:prompts.filter(p=>p.tag===tag);
+  render(window.filtered);
+}
+
+function copyPrompt(i,btn){
+  const text=window.filtered[i].text;
+  navigator.clipboard.writeText(text).then(()=>{
+    btn.textContent='✅ 已复制';
+    btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='📋 复制';btn.classList.remove('copied')},1500);
+  });
+}
+
+// init
+window.filtered=prompts;
+render(prompts);
+</script>
+</body>
+</html>
