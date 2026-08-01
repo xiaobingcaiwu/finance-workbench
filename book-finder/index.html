@@ -34,21 +34,22 @@ input:focus{border-color:var(--cyan)}
 
 <div class="tip">
 💡 <b>找书技巧</b><br>
-1. 优先点「百度」和「必应」，搜出来的第三方转载站一般能免费看<br>
-2. 搜不到的话把书名写全再试一次<br>
-3. 部分盐选专栏改了名，换个关键词试试
+1. 重点用<b>「百度搜转载站」</b>和<b>「排除知乎原站」</b>，搜出来的搬运站不用会员<br>
+2. 搜不到换关键词重试——有些盐选专栏改过名<br>
+3. 公众号文章有时候会全文转载，搜狗那条专门搜这个
 </div>
 
 <script>
 function search(){
   const name=document.getElementById('bookName').value.trim();
   if(!name)return;
-  const q=encodeURIComponent('知乎盐选 '+name);
+  const q=encodeURIComponent('知乎盐选 '+name+' 全文');
+  const q2=encodeURIComponent('知乎盐选 '+name+' -site:zhihu.com');
   const engines=[
-    {name:'🔍 百度搜索',url:'https://www.baidu.com/s?wd='+q},
-    {name:'🔍 必应搜索',url:'https://cn.bing.com/search?q='+q},
-    {name:'🔍 搜狗搜索（含公众号）',url:'https://weixin.sogou.com/weixin?type=2&query='+q},
-    {name:'📖 知乎直接搜',url:'https://www.zhihu.com/search?type=content&q='+encodeURIComponent(name)},
+    {name:'🔍 百度搜转载站',url:'https://www.baidu.com/s?wd='+q},
+    {name:'🔍 百度(排除知乎原站)',url:'https://www.baidu.com/s?wd='+q2},
+    {name:'🔍 搜狗搜公众号',url:'https://weixin.sogou.com/weixin?type=2&query='+encodeURIComponent('知乎盐选 '+name)},
+    {name:'📖 必应搜索',url:'https://cn.bing.com/search?q='+q},
   ];
   let html='';
   engines.forEach(e=>{
