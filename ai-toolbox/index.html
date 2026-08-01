@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>AI搞钱工具箱</title>
+<style>
+:root{--bg:#faf8f5;--card:#fff;--border:#e8e3db;--cyan:#0d9488;--blue:#2563eb;--red:#dc2626;--yellow:#d97706;--green:#16a34a;--text:#3d3835;--sub:#8c8580}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:480px;margin:0 auto;min-height:100vh;padding:0 16px 100px}
+.top-bar{position:sticky;top:0;background:var(--bg);padding:14px 0 8px;z-index:10}
+.top-bar h1{font-size:20px;font-weight:800}
+.top-bar .sub{font-size:12px;color:var(--sub);margin-top:2px}
+.tags{display:flex;gap:6px;overflow-x:auto;padding:8px 0;scrollbar-width:none}
+.tags::-webkit-scrollbar{display:none}
+.tag-btn{flex-shrink:0;padding:7px 14px;border-radius:18px;font-size:13px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;white-space:nowrap;transition:all .2s}
+.tag-btn.active{background:var(--cyan);color:#fff;border-color:var(--cyan)}
+.card{background:var(--card);border-radius:14px;padding:16px;margin-bottom:10px;border:1px solid var(--border)}
+.card-title{font-size:15px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.prompt-box{background:#f5f2ed;border-radius:10px;padding:12px;font-size:13px;line-height:1.7;margin-bottom:8px;position:relative;white-space:pre-wrap}
+.copy-btn{position:absolute;top:8px;right:8px;background:var(--cyan);color:#fff;border:none;border-radius:14px;padding:4px 12px;font-size:11px;cursor:pointer;font-weight:600}
+.copy-btn.copied{background:var(--green)}
+.prompt-label{font-size:11px;color:var(--sub);margin-bottom:3px;font-weight:600}
+.banner{background:linear-gradient(135deg,var(--cyan),var(--blue));color:#fff;border-radius:14px;padding:16px;margin-bottom:14px;text-align:center}
+.banner h2{font-size:18px;margin-bottom:4px}
+.banner p{font-size:13px;opacity:.9}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <h1>🤖 AI搞钱工具箱</h1>
+  <div class="sub">点一下复制，粘贴到AI就能用</div>
+</div>
+
+<div class="tags" id="tags">
+  <button class="tag-btn active" onclick="filter('all')">全部</button>
+  <button class="tag-btn" onclick="filter('写作')">✍️ 写作</button>
+  <button class="tag-btn" onclick="filter('绘画')">🎨 绘画</button>
+  <button class="tag-btn" onclick="filter('搞钱')">💰 搞钱</button>
+  <button class="tag-btn" onclick="filter('脚本')">🎬 脚本</button>
+</div>
+
+<div class="banner">
+  <h2>🎁 财务人专属福利</h2>
+  <p>个税计算器 · 发票税额 · 对账工具 · 发票SOP<br>→ <u onclick="location.href='https://xiaobingcaiwu.github.io/finance-workbench/'" style="cursor:pointer">点这里免费使用</u></p>
+</div>
+
+<div id="prompts"></div>
+
+<script>
+const prompts=[
+  // 写作类
+  {tag:'写作',title:'公众号爆文（观点文）',label:'结构：场景代入+案例论证+金句收束',text:'你是一位公众号爆文写手，请以"[填入主题]"为题写一篇认知观点文。要求：开头场景代入痛点，中间用2-3个真实案例论证，结尾金句收束。语气像朋友聊天，不用书面腔。字数800-1200，短句为主，每段不超过3行。'},
+  {tag:'写作',title:'公众号干货教程',label:'结构：痛点→准备→分步→避坑',text:'请写一篇"[填入主题]"的保姆级教程，面向刚入门的新人。结构：①痛点引入（为什么要学这个）②准备工作（列清单）③分步操作（每步带具体指令）④常见坑避雷。语气接地气，不要理论知识，只要操作步骤。'},
+  {tag:'写作',title:'小红书种草笔记',label:'闺蜜口吻+短段+emoji+标签',text:'请写一篇小红书笔记，主题"[填入产品/方法]"。要求：标题带emoji和数字，正文短段+大量换行，语气像闺蜜分享真实体验。包含：入手原因、使用感受、优缺点、值不值得。300-500字，末尾带3-5个标签。不要广告感。'},
+  {tag:'写作',title:'小红书爆款标题生成',label:'数字+痛点+情绪+身份锁定',text:'请生成5个小红书爆款标题，主题"[填入主题]"。每个标题包含：数字+痛点词+情绪词+身份锁定（"打工人""宝妈""学生党""财务人"等）。每个不超过20字，要有让人忍不住点进去的冲动。'},
+  {tag:'写作',title:'清单体（适合收藏转发）',label:'一句话总结+展开+例子',text:'请列出"[填入主题]必做的X件事"。每个条目包含：①一句核心总结 ②2-3句展开说明 ③1个具体例子。适合收藏转发，每条200字以内。'},
+  {tag:'写作',title:'知乎高赞回答',label:'个人经历代入+方法论+金句',text:'请写一个知乎回答，问题是"[填入问题]"。开头用第一人称真实经历代入（制造共鸣），中间给3个具体可操作的方法，末尾一句金句收束。不要"谢邀"，不要套话，直接进入正文。字数600-1000。'},
+  {tag:'写作',title:'知乎反常识回答',label:'反驳主流观点+论证+总结',text:'请针对"[填入问题]"，写一个反常识的回答。先反驳最高赞答案的常见观点，再给出你的论证（最好有数据或案例支撑），最后总结。语气理性但不傲慢，让人看完觉得"有道理"。'},
+  {tag:'写作',title:'公众号金句生成',label:'一句话点燃情绪',text:'请围绕"[填入主题]"生成10条金句。每条不超过30字，要能截图传播。风格：扎心真实，像朋友说的不是书上抄的。避免鸡汤味和说教味。'},
+  {tag:'写作',title:'闲鱼商品文案',label:'标题公式+痛点+下单指引',text:'请为"[填入商品]"写一个闲鱼商品文案。标题公式：年份+品类+核心卖点+附赠福利。正文：痛点引入+产品介绍+买家秀效果+下单指引。要求看起来像真实卖家分享，不像广告。'},
+  {tag:'写作',title:'朋友圈卖货文案',label:'短+口语+稀缺感',text:'请写3条朋友圈卖货文案，推"[填入产品]"。每条3-5句，口语化，带emoji。第1条拉关系，第2条讲效果，第3条逼单（限时/限量）。'},
+  
+  // 脚本类
+  {tag:'脚本',title:'抖音口播脚本 30秒',label:'前5秒抛问题→给方案→引导点赞',text:'请写一个30秒抖音口播脚本，主题"[填入主题]"。格式：时间轴+画面描述+口播文案。前5秒必须抛一个问题或反常识观点抓注意力，中间给3个具体解决步骤，结尾引导点赞关注。口语化，像对着镜头聊天。'},
+  {tag:'脚本',title:'抖音口播脚本 40秒',label:'场景代入+方法+钩子',text:'请写一个40秒抖音口播脚本，主题"[填入主题]"。开头用"你有没有遇到过..."场景代入，中段给3步解决方法，结尾抛一个钩子（"下期讲XXX"）。语气像朋友分享，不要播音腔。'},
+  {tag:'脚本',title:'短视频带货脚本',label:'痛点→产品→效果→下单',text:'请写一个60秒短视频带货脚本，推"[填入产品]"。结构：前10秒展示痛点场景，中30秒演示产品怎么解决问题，后20秒展示使用效果+引导下单。全程无废话，每句话都推进剧情。'},
+  {tag:'脚本',title:'AI漫剧分集大纲',label:'5集×2分钟·甜宠/霸总/古风',text:'请生成一个AI漫剧的5集大纲，题材"[填入题材，如霸道总裁/古风甜宠/复仇逆袭]"，每集2分钟。包含：每集的集名、核心场景、对话要点、情绪高潮。角色控制在3人以内。'},
+  
+  // 绘画类
+  {tag:'绘画',title:'写实人像（Midjourney）',label:'职场/古风/生活 通用',text:'一个年轻[男性/女性]，[职场穿搭/汉服/日常休闲]，半身照，[室内/户外]自然光，柔和色调，8K超清，细节丰富，商业摄影风格 --ar 3:4 --v 6.1'},
+  {tag:'绘画',title:'产品白底图（电商用）',label:'干净背景+专业打光',text:'产品摄影，[填入产品名]，白色大理石台面，柔光，干净背景，电商白底图，超细节，商业级画质 --ar 1:1 --v 6.1'},
+  {tag:'绘画',title:'AI漫剧角色设计',label:'三视图+韩漫/国漫风格',text:'[填入角色类型，如霸道总裁/古风女主]，[西装/汉服等]，[表情特征]，[韩漫画风/国漫风格]，人物设计三视图，全身站立，正面+侧面+背面 --ar 16:9'},
+  {tag:'绘画',title:'小红书封面图（即梦AI）',label:'扁平插画+留白多+温馨配色',text:'生成一个小红书封面图插画，主题"[填入主题]"，现代简约风格，[暖色调/马卡龙配色]，留白多方便加文字，扁平化设计，治愈感。'},
+  {tag:'绘画',title:'AI头像定制',label:'Q版/写实/动漫 多风格',text:'生成一个[Q版/动漫/写实]风格头像，[男生/女生]，[发型特征]，[服装描述]，[表情]，[糖果色背景/纯色背景]，高清，适合做社交媒体头像。'},
+  {tag:'绘画',title:'AI壁纸（变现用）',label:'手机壁纸 9:16 高颜值',text:'生成一张手机壁纸，主题"[填入主题，如治愈风景/极简文字/梦幻星空]"，9:16竖版比例，高饱和度，适合做手机锁屏，小红书爆款风格。'},
+  
+  // 搞钱类
+  {tag:'搞钱',title:'闲鱼卖虚拟商品全流程',label:'从选品到自动发货',text:'请给我一套在闲鱼卖虚拟商品的完整流程。包含：①选品方法（卖什么利润高）②商品上架技巧（标题公式+主图+文案）③自动发货设置（用什么工具、怎么配）④防违规指南（哪些词不能写）。每步具体到操作，不要理论。'},
+  {tag:'搞钱',title:'公众号从0到100粉',label:'新手7天启动',text:'请帮我制定一个公众号从0到100粉的7天启动计划。每天具体做什么：第一天注册+设置+发第一篇文章，后面每天发什么选题、去哪引流、怎么让文章被搜到。面向完全没有粉丝基础的新手。'},
+  {tag:'搞钱',title:'知乎引流财务粉',label:'回答+专栏+好物推荐',text:'请给我一套在知乎引流财务粉丝的方法。包含：①搜什么关键词找高流量问题 ②回答结构模板（开头怎么写+正文怎么铺+结尾怎么放链接不违规）③专栏怎么同步 ④多久更新一次。目标人群：会计/出纳/财务人。'},
+  {tag:'搞钱',title:'AI接PPT/简历单子',label:'话术+报价+交付流程',text:'请给我一套用AI接PPT/简历定制单的完整方案。包含：①闲鱼商品页怎么写 ②客户咨询话术（怎么引导下单）③报价标准（按页数/难度）④用AI生成初稿→自己微调→交付的完整流程 ⑤常见客户问题怎么回。'},
+  {tag:'搞钱',title:'AI漫剧变现路径',label:'从制作到发布到赚钱',text:'请给我一套完整的AI漫剧变现方案。包含：①用什么工具（即梦AI/Pika等免费工具推荐）②选题方向（什么题材容易火）③制作流程（写剧本→生图→配音→剪辑）④发布平台（抖音/快手/B站/小红书）⑤变现方式（流量分成+接广告+卖课）。'},
+];
+
+function render(list){
+  let html='';
+  list.forEach((p,i)=>{
+    html+=`<div class="card">
+      <div class="card-title">${p.title}</div>
+      <div class="prompt-label">${p.label}</div>
+      <div class="prompt-box"><button class="copy-btn" onclick="copyPrompt(${i},this)">📋 复制</button>${p.text}</div>
+    </div>`;
+  });
+  document.getElementById('prompts').innerHTML=html||'<div style="text-align:center;padding:40px;color:var(--sub)">没有匹配的提示词</div>';
+}
+
+function filter(tag){
+  document.querySelectorAll('.tag-btn').forEach(b=>b.classList.toggle('active',b.textContent.includes(tag)||(tag==='all'&&b.textContent.includes('全部'))));
+  const list=tag==='all'?prompts:prompts.filter(p=>p.tag===tag);
+  // 重新复制全局索引
+  window.filtered=tag==='all'?prompts:prompts.filter(p=>p.tag===tag);
+  render(list);
+}
+
+function copyPrompt(i,btn){
+  const text=window.filtered?window.filtered[i].text:prompts[i].text;
+  navigator.clipboard.writeText(text).then(()=>{
+    btn.textContent='✅ 已复制';
+    btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='📋 复制';btn.classList.remove('copied')},1500);
+  });
+}
+
+// init
+window.filtered=prompts;
+render(prompts);
+</script>
+</body>
+</html>
