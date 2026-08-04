@@ -5,200 +5,259 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
 <title>穿越文明 · 放置挂机</title>
 <style>
-:root{--gold:#f5c542;--brown:#8b5e3c;--dark:#2d2018;--text:#4a3b2e}
+:root{--gold:#ffd700;--brown:#8b5e3c;--dark:#2d2018}
 *{margin:0;padding:0;box-sizing:border-box;user-select:none;-webkit-tap-highlight-color:transparent}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:480px;margin:0 auto;min-height:100vh;background:#1a1410;color:#fff;overflow-x:hidden}
 
-/* ========== 场景区域 ========== */
-.scene{position:relative;height:58vh;min-height:380px;overflow:hidden;background:linear-gradient(180deg,#87ceeb 0%,#b8dff0 40%,#8bc34a 40%,#689f38 100%);transition:background 1s}
-.scene .sun{position:absolute;top:30px;right:40px;width:60px;height:60px;background:radial-gradient(circle,#fff8dc,#ffd700);border-radius:50%;box-shadow:0 0 30px rgba(255,215,0,.6)}
-.scene .cloud{position:absolute;font-size:30px;opacity:.7;animation:drift 20s linear infinite}
+/* 场景 */
+.scene{position:relative;height:46vh;min-height:300px;overflow:hidden;background:linear-gradient(180deg,#87ceeb 0%,#b8dff0 40%,#8bc34a 40%,#689f38 100%);transition:background 1s}
+.scene .sun{position:absolute;top:20px;right:40px;width:50px;height:50px;background:radial-gradient(circle,#fff8dc,#ffd700);border-radius:50%;box-shadow:0 0 30px rgba(255,215,0,.6)}
+.scene .cloud{position:absolute;font-size:26px;opacity:.7;animation:drift 25s linear infinite}
 .scene .cloud.c1{top:20px;left:-40px}
-.scene .cloud.c2{top:70px;left:-60px;animation-delay:10s}
-@keyframes drift{from{transform:translateX(-60px)}to{transform:translateX(560px)}}
-
-.scene .ground{position:absolute;bottom:0;left:0;right:0;height:40%;background:linear-gradient(180deg,#8bc34a,#689f38);z-index:1}
-.scene .hill{position:absolute;bottom:25%;left:-10%;width:120%;height:30%;background:linear-gradient(180deg,#7cb342,#558b2f);border-radius:50% 50% 0 0;opacity:.5}
-
-/* 场景元素（建筑/人/物） */
-.elem{position:absolute;bottom:38%;font-size:52px;z-index:3;cursor:pointer;filter:drop-shadow(0 4px 6px rgba(0,0,0,.3));transition:transform .15s;animation:bob 3s ease-in-out infinite}
+.scene .cloud.c2{top:60px;left:-80px;animation-delay:12s}
+@keyframes drift{from{transform:translateX(-80px)}to{transform:translateX(580px)}}
+.scene .ground{position:absolute;bottom:0;left:0;right:0;height:38%;background:linear-gradient(180deg,#8bc34a,#689f38);z-index:1}
+.scene .hill{position:absolute;bottom:24%;left:-10%;width:120%;height:28%;background:linear-gradient(180deg,#7cb342,#558b2f);border-radius:50% 50% 0 0;opacity:.5}
+.elem{position:absolute;bottom:36%;font-size:46px;z-index:3;cursor:pointer;filter:drop-shadow(0 4px 6px rgba(0,0,0,.3));transition:transform .15s;animation:bob 3s ease-in-out infinite}
 .elem:active{transform:scale(.9)}
-.elem .lbl{position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:10px;background:rgba(0,0,0,.6);padding:2px 8px;border-radius:8px;white-space:nowrap}
+.elem .lbl{position:absolute;bottom:-16px;left:50%;transform:translateX(-50%);font-size:9px;background:rgba(0,0,0,.6);padding:2px 7px;border-radius:8px;white-space:nowrap}
 @keyframes bob{0%,100%{margin-bottom:0}50%{margin-bottom:6px}}
-.elem.e1{left:10%}
-.elem.e2{left:38%;animation-delay:1s}
-.elem.e3{right:8%;animation-delay:2s}
-.elem .building{display:block;text-align:center;line-height:1}
-
-/* 点击金币飘字 */
-.coin-fx{position:absolute;font-size:20px;font-weight:800;color:#ffd700;pointer-events:none;animation:floatUp 1s ease-out forwards;z-index:9;text-shadow:0 2px 4px rgba(0,0,0,.5)}
+.elem.e1{left:8%}
+.elem.e2{left:42%;animation-delay:1s}
+.elem.e3{right:6%;animation-delay:2s}
+.coin-fx{position:absolute;font-size:18px;font-weight:800;color:#ffd700;pointer-events:none;animation:floatUp 1s ease-out forwards;z-index:9;text-shadow:0 2px 4px rgba(0,0,0,.5)}
 @keyframes floatUp{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-60px)}}
 
-/* 点击波纹 */
-.ripple{position:absolute;border:2px solid rgba(255,215,0,.7);border-radius:50%;pointer-events:none;animation:ripple .6s ease-out forwards;z-index:8}
-@keyframes ripple{from{width:10px;height:10px;opacity:1}to{width:70px;height:70px;opacity:0}}
-
-/* ========== 顶部资源栏（悬浮） ========== */
-.hud{position:sticky;top:0;z-index:50;background:rgba(30,22,14,.92);backdrop-filter:blur(8px);padding:10px 14px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.08)}
-.hud .era-chip{background:linear-gradient(135deg,#c9a227,#8b5e3c);border-radius:10px;padding:6px 10px;text-align:center;flex-shrink:0}
-.hud .era-chip .en{font-size:16px;line-height:1}
-.hud .era-chip .en2{font-size:9px;opacity:.85}
+/* HUD */
+.hud{position:sticky;top:0;z-index:50;background:rgba(30,22,14,.92);backdrop-filter:blur(8px);padding:8px 12px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,.08)}
+.hud .era-chip{background:linear-gradient(135deg,#c9a227,#8b5e3c);border-radius:10px;padding:5px 9px;text-align:center;flex-shrink:0}
+.hud .era-chip .en{font-size:15px;line-height:1}
+.hud .era-chip .en2{font-size:8px;opacity:.85}
 .hud .coin-box{flex:1;text-align:center}
-.hud .coin-box .cv{font-size:20px;font-weight:800;color:#ffd700}
-.hud .coin-box .cl{font-size:9px;color:rgba(255,255,255,.6)}
+.hud .coin-box .cv{font-size:18px;font-weight:800;color:var(--gold)}
+.hud .coin-box .cl{font-size:8px;color:rgba(255,255,255,.6)}
 .hud .rate-box{text-align:right;flex-shrink:0}
-.hud .rate-box .rv{font-size:13px;font-weight:700;color:#81c784}
-.hud .rate-box .rl{font-size:9px;color:rgba(255,255,255,.6)}
+.hud .rate-box .rv{font-size:12px;font-weight:700;color:#81c784}
+.hud .rate-box .rl{font-size:8px;color:rgba(255,255,255,.6)}
+.hud .quest-badge{position:relative;flex-shrink:0;background:rgba(255,255,255,.12);border-radius:10px;padding:6px 8px;font-size:12px;cursor:pointer}
+.hud .quest-badge .dot{position:absolute;top:3px;right:3px;width:8px;height:8px;background:#ff4d4f;border-radius:50%}
 
-/* ========== 底部操作栏 ========== */
-.bottom-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(30,22,14,.95);border-top:1px solid rgba(255,255,255,.08);padding:10px 14px calc(10px + env(safe-area-inset-bottom));display:flex;gap:8px;z-index:50}
-.bottom-bar .b-btn{flex:1;background:linear-gradient(135deg,#c9a227,#a8860b);border:none;border-radius:12px;padding:10px 4px;color:#fff;font-weight:700;font-size:13px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
-.bottom-bar .b-btn .bi{font-size:20px}
+/* 底部栏 */
+.bottom-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(30,22,14,.95);border-top:1px solid rgba(255,255,255,.08);padding:8px 12px calc(8px + env(safe-area-inset-bottom));display:flex;gap:6px;z-index:50}
+.bottom-bar .b-btn{flex:1;background:linear-gradient(135deg,#c9a227,#a8860b);border:none;border-radius:12px;padding:8px 2px;color:#fff;font-weight:700;font-size:11px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px}
+.bottom-bar .b-btn .bi{font-size:18px}
 .bottom-bar .b-btn.ghost{background:rgba(255,255,255,.1)}
 .bottom-bar .b-btn:active{transform:scale(.96)}
 
-/* ========== 面板 ========== */
+/* 面板 */
 .panel{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:100%;z-index:100;display:none;background:rgba(0,0,0,.5)}
 .panel.show{display:block}
-.panel .sheet{position:absolute;bottom:0;left:0;right:0;background:#faf6f0;color:var(--text);border-radius:20px 20px 0 0;max-height:75vh;overflow-y:auto;padding:18px 18px 30px;animation:slideUp .25s ease-out}
+.panel .sheet{position:absolute;bottom:0;left:0;right:0;background:#faf6f0;color:#4a3b2e;border-radius:20px 20px 0 0;max-height:78vh;overflow-y:auto;padding:16px 16px 30px;animation:slideUp .25s ease-out}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.panel .sheet .p-title{font-size:17px;font-weight:800;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.panel .sheet .close{background:none;border:none;font-size:22px;cursor:pointer;color:#a08c77}
-.panel .sheet .desc{font-size:12px;color:#a08c77;margin-bottom:12px}
-
-.up-item{background:#fff;border:1px solid #e8ddcf;border-radius:14px;padding:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
-.up-item .u-name{font-size:14px;font-weight:700}
-.up-item .u-desc{font-size:11px;color:#a08c77;margin-top:2px}
+.panel .sheet .p-title{font-size:16px;font-weight:800;display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.panel .sheet .close{background:none;border:none;font-size:20px;cursor:pointer;color:#a08c77}
+.panel .sheet .desc{font-size:11px;color:#a08c77;margin-bottom:10px}
+.up-item{background:#fff;border:1px solid #e8ddcf;border-radius:12px;padding:10px;display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:7px}
+.up-item .u-name{font-size:13px;font-weight:700}
+.up-item .u-desc{font-size:10px;color:#a08c77;margin-top:2px}
 .up-item .u-lv{font-size:10px;color:#c9a227;font-weight:700}
-.up-item .u-btn{background:linear-gradient(135deg,#c9a227,#a8860b);border:none;color:#fff;border-radius:10px;padding:9px 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
+.up-item .u-btn{background:linear-gradient(135deg,#c9a227,#a8860b);border:none;color:#fff;border-radius:10px;padding:8px 12px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
 .up-item .u-btn:disabled{background:#d8cdb8}
+.up-item .u-btn.ritual{background:linear-gradient(135deg,#e91e63,#ad1457)}
+.up-item .u-btn.green{background:linear-gradient(135deg,#43a047,#2e7d32)}
 
-/* 朝代进度 */
-.era-progress{margin:14px 0}
-.era-progress .ep-label{font-size:11px;color:#a08c77;margin-bottom:6px;text-align:center}
-.era-progress .ep-bar{height:10px;background:#e8ddcf;border-radius:5px;overflow:hidden}
-.era-progress .ep-fill{height:100%;background:linear-gradient(90deg,#c9a227,#8b5e3c);border-radius:5px;transition:width .3s}
-.era-strip{display:flex;overflow-x:auto;gap:5px;padding:8px 0;scrollbar-width:none}
+/* 事件弹窗 */
+.event-pop{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:100%;z-index:200;display:none;background:rgba(0,0,0,.65);align-items:center;justify-content:center}
+.event-pop.show{display:flex}
+.event-card{background:linear-gradient(160deg,#fff8e1,#ffe0b2);border-radius:18px;padding:22px;margin:0 20px;color:#4a3b2e;text-align:center;animation:popIn .3s ease-out;box-shadow:0 10px 40px rgba(0,0,0,.5)}
+@keyframes popIn{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+.event-card .ev-ic{font-size:44px;margin-bottom:8px}
+.event-card .ev-t{font-size:17px;font-weight:800;margin-bottom:6px}
+.event-card .ev-d{font-size:13px;color:#6d5840;margin-bottom:14px;line-height:1.5}
+.event-card .ev-opt{display:flex;flex-direction:column;gap:8px}
+.event-card .ev-btn{border:none;border-radius:12px;padding:11px;font-size:14px;font-weight:700;cursor:pointer;color:#fff}
+.event-card .ev-btn.a{background:linear-gradient(135deg,#c9a227,#a8860b)}
+.event-card .ev-btn.b{background:linear-gradient(135deg,#5c6bc0,#3949ab)}
+
+/* 任务 */
+.quest-item{background:#fff;border:1px solid #e8ddcf;border-radius:12px;padding:10px 12px;margin-bottom:7px;display:flex;align-items:center;gap:10px}
+.quest-item .q-ic{font-size:22px}
+.quest-item .q-info{flex:1}
+.quest-item .q-name{font-size:13px;font-weight:700}
+.quest-item .q-prog{font-size:10px;color:#a08c77;margin-top:2px}
+.quest-item .q-bar{height:6px;background:#eee;border-radius:3px;margin-top:4px;overflow:hidden}
+.quest-item .q-fill{height:100%;background:linear-gradient(90deg,#c9a227,#a8860b);border-radius:3px}
+.quest-item .q-claim{background:linear-gradient(135deg,#43a047,#2e7d32);border:none;color:#fff;border-radius:10px;padding:8px 10px;font-size:11px;font-weight:700;cursor:pointer}
+.quest-item .q-claim:disabled{background:#c8e6c9;cursor:default}
+
+/* 抽卡结果 */
+.draw-result{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:250;background:linear-gradient(160deg,#c9a227,#8b5e3c);color:#fff;border-radius:16px;padding:18px 26px;text-align:center;display:none;box-shadow:0 10px 40px rgba(0,0,0,.6);animation:popIn .3s ease-out}
+.draw-result.show{display:block}
+.draw-result .dr-ic{font-size:38px}
+.draw-result .dr-t{font-size:16px;font-weight:800;margin-top:4px}
+.draw-result .dr-d{font-size:12px;opacity:.9;margin-top:2px}
+
+/* 进度 */
+.era-progress{margin:0 14px 6px;padding:10px 0 0}
+.era-strip{display:flex;overflow-x:auto;gap:5px;padding:4px 0;scrollbar-width:none}
 .era-strip::-webkit-scrollbar{display:none}
-.era-strip .ed{flex-shrink:0;width:46px;text-align:center;font-size:9px;color:#a08c77;background:#fff;border:1px solid #e8ddcf;border-radius:10px;padding:5px 2px}
-.era-strip .ed .ic{font-size:16px;display:block}
-.era-strip .ed.cur{background:linear-gradient(135deg,#c9a227,#8b5e3c);color:#fff;font-weight:700;border-color:transparent}
-
-/* 离线收益弹窗 */
-.offline-pop{position:fixed;top:20%;left:50%;transform:translateX(-50%);z-index:200;background:linear-gradient(135deg,#8b5e3c,#c9a227);color:#fff;border-radius:18px;padding:20px 28px;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,.5);display:none}
-.offline-pop.show{display:block}
-.offline-pop .op-t{font-size:14px;opacity:.9;margin-bottom:6px}
-.offline-pop .op-v{font-size:28px;font-weight:800}
-.offline-pop .op-b{margin-top:12px;background:#fff;color:#8b5e3c;border:none;border-radius:12px;padding:8px 24px;font-weight:700;cursor:pointer}
+.era-strip .ed{flex-shrink:0;width:42px;text-align:center;font-size:8px;color:#a08c77;background:rgba(255,255,255,.1);border-radius:8px;padding:4px 2px}
+.era-strip .ed .ic{font-size:14px;display:block}
+.era-strip .ed.cur{background:linear-gradient(135deg,#c9a227,#8b5e3c);color:#fff;font-weight:700}
+.era-progress .ep-label{font-size:10px;color:rgba(255,255,255,.6);text-align:center;margin:6px 0 4px}
+.era-progress .ep-bar{height:8px;background:rgba(255,255,255,.15);border-radius:4px;overflow:hidden}
+.era-progress .ep-fill{height:100%;background:linear-gradient(90deg,#c9a227,#8b5e3c);border-radius:4px;transition:width .3s}
 </style>
 </head>
 <body>
 
-<!-- 离线收益弹窗 -->
-<div class="offline-pop" id="offlinePop">
-  <div class="op-t">🌙 离线收益</div>
-  <div class="op-v" id="offlineVal">+0</div>
-  <button class="op-b" onclick="closeOffline()">收下</button>
-</div>
-
-<!-- 场景 -->
 <div class="scene" id="scene" onclick="sceneTap(event)">
   <div class="sun"></div>
   <div class="cloud c1">☁️</div>
   <div class="cloud c2">☁️</div>
   <div class="hill"></div>
   <div class="ground"></div>
-  <!-- 场景元素 -->
-  <div class="elem e1" onclick="openUpgrade(event,'hut')">
-    <span class="building" id="bHut">🛖</span>
-    <span class="lbl" id="lblHut">茅屋</span>
-  </div>
-  <div class="elem e2" onclick="openUpgrade(event,'fire')">
-    <span class="building" id="bFire">🔥</span>
-    <span class="lbl" id="lblFire">火堆</span>
-  </div>
-  <div class="elem e3" onclick="tap(event)">
-    <span class="building" id="bVillager">🧑‍🌾</span>
-    <span class="lbl" id="lblVillager">村民</span>
-  </div>
+  <div class="elem e1" onclick="openPanel('build')"><span id="bHut">🛖</span><span class="lbl">茅屋</span></div>
+  <div class="elem e2" onclick="openPanel('ritual')"><span id="bFire">🔥</span><span class="lbl">祭坛</span></div>
+  <div class="elem e3" onclick="tap(event)"><span id="bVillager">🧑‍🌾</span><span class="lbl">村民</span></div>
 </div>
 
-<!-- 顶部资源栏 -->
 <div class="hud">
-  <div class="era-chip">
-    <div class="en" id="hudEra">🪨</div>
-    <div class="en2" id="hudEraName">石器时代</div>
-  </div>
-  <div class="coin-box">
-    <div class="cv" id="hudCoin">0</div>
-    <div class="cl">金币</div>
-  </div>
-  <div class="rate-box">
-    <div class="rv" id="hudRate">+1/秒</div>
-    <div class="rl">产出速率</div>
-  </div>
+  <div class="era-chip"><div class="en" id="hudEra">🪨</div><div class="en2" id="hudEraName">石器时代</div></div>
+  <div class="coin-box"><div class="cv" id="hudCoin">0</div><div class="cl">金币</div></div>
+  <div class="coin-box" style="flex:.6"><div class="cv" id="hudGrain">0</div><div class="cl">粮食</div></div>
+  <div class="rate-box"><div class="rv" id="hudRate">+1/秒</div><div class="rl">产出</div></div>
+  <div class="quest-badge" onclick="openPanel('quest')">🎯<span class="dot" id="questDot" style="display:none"></span></div>
 </div>
 
-<!-- 朝代进度条 -->
-<div style="background:rgba(30,22,14,.5);padding:0 14px">
-  <div class="era-progress">
-    <div class="era-strip" id="eraStrip"></div>
-    <div class="ep-label" id="eraProgressLabel"></div>
-    <div class="ep-bar"><div class="ep-fill" id="eraProgressFill"></div></div>
-  </div>
+<div class="era-progress">
+  <div class="era-strip" id="eraStrip"></div>
+  <div class="ep-label" id="eraProgressLabel"></div>
+  <div class="ep-bar"><div class="ep-fill" id="eraProgressFill"></div></div>
 </div>
 
-<!-- 底部操作栏 -->
 <div class="bottom-bar">
-  <button class="b-btn" onclick="openUpgrade(null,'hut')"><span class="bi">🛖</span>升级</button>
-  <button class="b-btn" onclick="tapAll()"><span class="bi">👆</span>猛点</button>
-  <button class="b-btn ghost" onclick="showAbout()"><span class="bi">📜</span>文明志</button>
+  <button class="b-btn" onclick="openPanel('build')"><span class="bi">🛖</span>建造</button>
+  <button class="b-btn" onclick="openPanel('ritual')"><span class="bi">🕯️</span>祭祀</button>
+  <button class="b-btn" onclick="tapAll()"><span class="bi">👆</span>劳作</button>
+  <button class="b-btn ghost" onclick="openPanel('about')"><span class="bi">📜</span>文明志</button>
 </div>
 
-<!-- 升级面板 -->
-<div class="panel" id="panelUpgrade" onclick="if(event.target===this)closePanel()">
+<!-- 建造面板 -->
+<div class="panel" id="panelBuild" onclick="if(event.target===this)closePanel()">
   <div class="sheet">
-    <div class="p-title" id="panelTitle">升级文明 <button class="close" onclick="closePanel()">✕</button></div>
-    <div class="desc" id="panelDesc">点击建筑升级，提升产出效率</div>
-    <div id="upgradeList"></div>
+    <div class="p-title">🛖 建造 <button class="close" onclick="closePanel()">✕</button></div>
+    <div class="desc">建造建筑提升产出，点击建筑升级</div>
+    <div id="buildList"></div>
   </div>
 </div>
 
-<!-- 文明志面板 -->
+<!-- 祭祀面板 -->
+<div class="panel" id="panelRitual" onclick="if(event.target===this)closePanel()">
+  <div class="sheet">
+    <div class="p-title">🕯️ 祭祀祈福 <button class="close" onclick="closePanel()">✕</button></div>
+    <div class="desc">向神明献祭，获得神秘恩赐（花金币抽宝贝）</div>
+    <div id="ritualList"></div>
+  </div>
+</div>
+
+<!-- 任务面板 -->
+<div class="panel" id="panelQuest" onclick="if(event.target===this)closePanel()">
+  <div class="sheet">
+    <div class="p-title">🎯 今日任务 <button class="close" onclick="closePanel()">✕</button></div>
+    <div class="desc">完成每日任务领奖励</div>
+    <div id="questList"></div>
+  </div>
+</div>
+
+<!-- 文明志 -->
 <div class="panel" id="panelAbout" onclick="if(event.target===this)closePanel()">
   <div class="sheet">
     <div class="p-title">📜 文明志 <button class="close" onclick="closePanel()">✕</button></div>
-    <div class="desc">从石器时代一路走向未来</div>
+    <div class="desc">你走过的路</div>
     <div id="aboutContent"></div>
   </div>
 </div>
 
+<!-- 事件弹窗 -->
+<div class="event-pop" id="eventPop">
+  <div class="event-card">
+    <div class="ev-ic" id="evIc">🌾</div>
+    <div class="ev-t" id="evTitle">丰收</div>
+    <div class="ev-d" id="evDesc">今年风调雨顺</div>
+    <div class="ev-opt">
+      <button class="ev-btn a" id="evBtnA" onclick="chooseEvent(0)"></button>
+      <button class="ev-btn b" id="evBtnB" onclick="chooseEvent(1)"></button>
+    </div>
+  </div>
+</div>
+
+<!-- 抽卡结果 -->
+<div class="draw-result" id="drawResult">
+  <div class="dr-ic" id="drIc">🌟</div>
+  <div class="dr-t" id="drTitle"></div>
+  <div class="dr-d" id="drDesc"></div>
+</div>
+
 <script>
-const SAVE_KEY='civilization_save_v1';
+const SAVE_KEY='civilization_save_v2';
 const ERAS=[
-  {name:'石器时代',icon:'🪨',sub:'钻木取火',need:0,sky:['#87ceeb','#b8dff0','#8bc34a','#689f38']},
-  {name:'青铜时代',icon:'🏹',sub:'铜器初现',need:800,sky:['#a8c8e8','#c8d8e8','#9cbf6a','#779a4e']},
-  {name:'商周',icon:'🥁',sub:'礼乐初成',need:4000,sky:['#c8a878','#d8c098','#9cbf6a','#779a4e']},
-  {name:'春秋战国',icon:'⚔️',sub:'百家争鸣',need:16000,sky:['#d8a878','#e0b890','#a0c068','#7a9a48']},
-  {name:'秦汉',icon:'🏯',sub:'一统天下',need:60000,sky:['#c89868','#d0a878','#9cb860','#769a40']},
-  {name:'三国',icon:'🐴',sub:'乱世英雄',need:200000,sky:['#b08860','#c09870','#98b058','#709040']},
-  {name:'隋唐',icon:'🏮',sub:'盛世长安',need:650000,sky:['#ffa07a','#ffb890','#a0b858','#789a38']},
-  {name:'宋元',icon:'⚓',sub:'海上丝路',need:2000000,sky:['#ffc080','#ffd0a0','#98a850','#709030']},
-  {name:'明清',icon:'🏺',sub:'康乾盛世',need:6500000,sky:['#e8a878','#f0b890','#90a848','#689030']},
-  {name:'近现代',icon:'🚂',sub:'工业革命',need:20000000,sky:['#88a8c8','#a8c8d8','#88a858','#688838']},
-  {name:'未来',icon:'🚀',sub:'星辰大海',need:70000000,sky:['#404060','#606080','#506050','#304030']},
+  {name:'石器时代',icon:'🪨',need:0,sky:['#87ceeb','#b8dff0','#8bc34a','#689f38']},
+  {name:'青铜时代',icon:'🏹',need:1500,sky:['#a8c8e8','#c8d8e8','#9cbf6a','#779a4e']},
+  {name:'商周',icon:'🥁',need:8000,sky:['#c8a878','#d8c098','#9cbf6a','#779a4e']},
+  {name:'春秋战国',icon:'⚔️',need:30000,sky:['#d8a878','#e0b890','#a0c068','#7a9a48']},
+  {name:'秦汉',icon:'🏯',need:120000,sky:['#c89868','#d0a878','#9cb860','#769a40']},
+  {name:'三国',icon:'🐴',need:400000,sky:['#b08860','#c09870','#98b058','#709040']},
+  {name:'隋唐',icon:'🏮',need:1300000,sky:['#ffa07a','#ffb890','#a0b858','#789a38']},
+  {name:'宋元',icon:'⚓',need:4000000,sky:['#ffc080','#ffd0a0','#98a850','#709030']},
+  {name:'明清',icon:'🏺',need:13000000,sky:['#e8a878','#f0b890','#90a848','#689030']},
+  {name:'近现代',icon:'🚂',need:40000000,sky:['#88a8c8','#a8c8d8','#88a858','#688838']},
+  {name:'未来',icon:'🚀',need:150000000,sky:['#404060','#606080','#506050','#304030']},
 ];
-const UPGRADES=[
-  {id:'hut',name:'🛖 茅屋升级',desc:'村落发展 +20%',base:20,mul:1.5,effect:0.2,building:'hut',emojis:['🛖','🏠','🏡','🏘️','🏰']},
-  {id:'fire',name:'🔥 火种技术',desc:'文明薪火 +25%',base:150,mul:1.6,effect:0.25,building:'fire',emojis:['🔥','🏮','🔆','⚡','☀️']},
-  {id:'farm',name:'🌾 农田开垦',desc:'粮食收成 +30%',base:900,mul:1.7,effect:0.3,building:'hut',emojis:['🌾','🌿','🌻','🌳','🏞️']},
-  {id:'craft',name:'🏺 陶器作坊',desc:'制陶技艺 +35%',base:6000,mul:1.75,effect:0.35,building:'hut',emojis:['🏺','⚱️','📿','💎','🎇']},
-  {id:'trade',name:'🛶 商路开通',desc:'商路收益 +40%',base:35000,mul:1.8,effect:0.4,building:'hut',emojis:['🛶','⛵','🚢','🗺️','🛩️']},
-  {id:'wheel',name:'⚙️ 轮子发明',desc:'运输效率 +50%',base:180000,mul:1.85,effect:0.5,building:'hut',emojis:['⚙️','🛞','🚜','🚗','🚀']},
-  {id:'coin',name:'🪙 货币铸造',desc:'经济体系 +60%',base:800000,mul:1.9,effect:0.6,building:'hut',emojis:['🪙','💰','🏦','💹','🌌']},
-  {id:'iron',name:'⚒️ 冶铁技术',desc:'铁器时代 +75%',base:3500000,mul:1.95,effect:0.75,building:'hut',emojis:['⚒️','🛡️','🗡️','🏭','🛸']},
+const BUILDINGS=[
+  {id:'hut',name:'🛖 茅屋',desc:'金币产出 +20%',base:20,mul:1.5,eff:0.2},
+  {id:'fire',name:'🔥 火种',desc:'金币产出 +25%',base:150,mul:1.6,eff:0.25},
+  {id:'farm',name:'🌾 农田',desc:'粮食产出 +30%',base:900,mul:1.7,eff:0.3},
+  {id:'temple',name:'🕍 祭坛',desc:'祭祀免费 +35%',base:6000,mul:1.75,eff:0.35},
+  {id:'market',name:'🏪 集市',desc:'金币产出 +40%',base:35000,mul:1.8,eff:0.4},
+  {id:'workshop',name:'⚙️ 工坊',desc:'全产出 +50%',base:180000,mul:1.85,eff:0.5},
 ];
-let game={coins:0,total:0,levels:{},lastTime:Date.now(),taps:0,offlineGain:0};
+const RITUALS=[
+  {id:'r1',name:'🌟 祈福',price:50,pool:[
+    {ic:'💰',t:'财源广进',d:'+500 金币',give:{coin:500}},
+    {ic:'🌾',t:'五谷丰登',d:'+300 粮食',give:{grain:300}},
+    {ic:'📈',t:'神助',d:'30秒双倍产出',give:{boost:30}},
+    {ic:'⚔️',t:'战神庇佑',d:'+1000 金币',give:{coin:1000}},
+    {ic:'🪶',t:'祥瑞',d:'+150 金币 +100 粮食',give:{coin:150,grain:100}},
+    {ic:'💩',t:'神罚',d:'-100 金币',give:{coin:-100}},
+  ]},
+  {id:'r2',name:'🌠 大祭',price:500,pool:[
+    {ic:'💰',t:'金玉满堂',d:'+5000 金币',give:{coin:5000}},
+    {ic:'🌾',t:'盛世丰年',d:'+3000 粮食',give:{grain:3000}},
+    {ic:'📈',t:'天降神力',d:'60秒双倍产出',give:{boost:60}},
+    {ic:'⚔️',t:'战神临世',d:'+10000 金币',give:{coin:10000}},
+    {ic:'🪶',t:'凤凰祥瑞',d:'+3000 金币 +2000 粮食',give:{coin:3000,grain:2000}},
+    {ic:'💩',t:'天怒',d:'-500 金币',give:{coin:-500}},
+  ]},
+];
+const EVENTS=[
+  {ic:'🌾',t:'丰收之年',d:'庄稼大丰收，村民欢欣鼓舞',a:{t:'庆祝 (+300粮)',g:{grain:300}},b:{t:'囤粮 (+500粮)',g:{grain:500}}},
+  {ic:'🏺',t:'商队路过',d:'远方商队带来稀罕货物',a:{t:'交易 (+800金币)',g:{coin:800}},b:{t:'拒绝 (-100金币)',g:{coin:-100}}},
+  {ic:'⚡',t:'雷雨来袭',d:'狂风暴雨，作物受损',a:{t:'抢收 (+200粮 -100币)',g:{grain:200,coin:-100}},b:{t:'硬扛 (+500币)',g:{coin:500}}},
+  {ic:'🦁',t:'野兽袭村',d:'猛兽闯入村庄！',a:{t:'迎战 (+1000币)',g:{coin:1000}},b:{t:'避让 (-300粮)',g:{grain:-300}}},
+  {ic:'🌟',t:'流星坠落',d:'天降流星，众人围观',a:{t:'挖掘 (+1500币)',g:{coin:1500}},b:{t:'供奉 (+800粮)',g:{grain:800}}},
+  {ic:'👥',t:'流民投奔',d:'一群流民请求收留',a:{t:'收留 (+200粮)',g:{grain:200}},b:{t:'拒绝 (+500币)',g:{coin:500}}},
+];
+const QUESTS=[
+  {id:'q1',name:'🌾 劳作 10 次',target:'tap',need:10,reward:100,ic:'👆'},
+  {id:'q2',name:'🛖 升级建筑 2 次',target:'build',need:2,reward:300,ic:'⚒️'},
+  {id:'q3',name:'🕯️ 祭祀 1 次',target:'ritual',need:1,reward:150,ic:'🌟'},
+  {id:'q4',name:'⏱️ 在线 3 分钟',target:'time',need:180,reward:500,ic:'⏰'},
+];
+let game={
+  coins:0,grain:0,total:0,levels:{},lastTime:Date.now(),taps:0,
+  rituals:0,builds:0,online:0,claimed:{},boost:0,offlineGain:0,eventPending:null
+};
 
 function save(){game.lastTime=Date.now();localStorage.setItem(SAVE_KEY,JSON.stringify(game));}
 function load(){
@@ -209,104 +268,199 @@ function load(){
       const elapsed=(Date.now()-d.lastTime)/1000;
       const rate=calcRate(d);
       const off=Math.floor(elapsed*rate*0.5);
-      if(off>0){d.coins+=off;d.total+=off;d.offlineGain=off;game._offlineHours=Math.floor(elapsed/3600*10)/10;}
+      if(off>0){d.coins+=off;d.total+=off;d.offlineGain=off;}
       game=Object.assign(game,d);
     }
   }catch(e){}
 }
-function calcRate(g=game){let r=1;UPGRADES.forEach(u=>{r*=1+u.effect*(g.levels[u.id]||0)});return r;}
-function price(u){return Math.floor(u.base*Math.pow(u.mul,g.levels[u.id]||0));}
+function calcRate(g=game){
+  let r=1;
+  BUILDINGS.forEach(b=>{r*=1+b.eff*(g.levels[b.id]||0)});
+  return r;
+}
+function price(b){return Math.floor(b.base*Math.pow(b.mul,game.levels[b.id]||0));}
 function fmt(n){if(n>=1e9)return(n/1e9).toFixed(2)+'亿';if(n>=1e6)return(n/1e6).toFixed(1)+'M';if(n>=1e4)return(n/1e3).toFixed(1)+'K';return Math.floor(n).toLocaleString();}
 function eraIdx(){let i=0;ERAS.forEach((e,j)=>{if(game.total>=e.need)i=j});return i;}
 
 function tick(){
-  const now=Date.now();const dt=(now-game.lastTime)/1000;game.lastTime=now;
-  const g=calcRate()*dt;game.coins+=g;game.total+=g;
+  const now=Date.now();const dt=Math.min((now-game.lastTime)/1000,5);game.lastTime=now;
+  if(game.boost>0)game.boost-=dt;
+  const mult=game.boost>0?2:1;
+  const rate=calcRate()*mult;
+  game.coins+=rate*dt;game.total+=rate*dt;
+  game.grain+=rate*0.3*dt;
+  game.online+=dt;
   updateUI();save();
+  maybeEvent();
 }
-
 function tap(e){
-  const rate=calcRate();game.coins+=rate;game.total+=rate;game.taps++;
+  const rate=calcRate()*(game.boost>0?2:1);
+  game.coins+=rate;game.total+=rate;game.taps++;
   if(e){
     const r=e.currentTarget.getBoundingClientRect();
     const x=e.clientX-r.left,y=e.clientY-r.top;
     const fx=document.createElement('div');fx.className='coin-fx';fx.textContent='+'+fmt(rate);fx.style.left=(x+10)+'px';fx.style.top=(y-10)+'px';
-    document.getElementById('scene').appendChild(fx);
-    setTimeout(()=>fx.remove(),900);
-    const rp=document.createElement('div');rp.className='ripple';rp.style.left=(x-5)+'px';rp.style.top=(y-5)+'px';
-    document.getElementById('scene').appendChild(rp);setTimeout(()=>rp.remove(),600);
+    document.getElementById('scene').appendChild(fx);setTimeout(()=>fx.remove(),900);
   }
   updateUI();
 }
 function tapAll(){
-  const rate=calcRate();game.coins+=rate*10;game.total+=rate*10;game.taps+=10;
+  const rate=calcRate()*(game.boost>0?2:1);
+  game.coins+=rate*8;game.total+=rate*8;game.taps+=8;
   const s=document.getElementById('scene');
-  for(let i=0;i<8;i++){
-    const fx=document.createElement('div');fx.className='coin-fx';fx.textContent='+'+fmt(rate);fx.style.left=(20+Math.random()*80)+'%';fx.style.top=(30+Math.random()*30)+'%';
+  for(let i=0;i<6;i++){
+    const fx=document.createElement('div');fx.className='coin-fx';fx.textContent='+'+fmt(rate);fx.style.left=(15+Math.random()*70)+'%';fx.style.top=(25+Math.random()*25)+'%';
     s.appendChild(fx);setTimeout(()=>fx.remove(),900);
   }
   updateUI();
 }
-function sceneTap(e){
-  if(e.target.id==='scene')tap({currentTarget:e.currentTarget,clientX:e.clientX,clientY:e.clientY});
-}
+function sceneTap(e){if(e.target.id==='scene')tap({currentTarget:e.currentTarget,clientX:e.clientX,clientY:e.clientY});}
 
-function openUpgrade(e,id){
-  e&&e.stopPropagation();
-  document.getElementById('panelUpgrade').classList.add('show');
-  renderUpgrades();
+function openPanel(id){
+  closePanel();
+  const el=document.getElementById('panel'+id.charAt(0).toUpperCase()+id.slice(1));
+  if(el)el.classList.add('show');
+  renderPanel(id);
 }
 function closePanel(){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('show'));}
-function buy(id){
-  const u=UPGRADES.find(x=>x.id===id);
-  const p=price(u);
+
+function build(id){
+  const b=BUILDINGS.find(x=>x.id===id);
+  const p=price(b);
   if(game.coins>=p){
-    game.coins-=p;game.levels[id]=(game.levels[id]||0)+1;
-    updateUI();save();renderUpgrades();
+    game.coins-=p;game.levels[id]=(game.levels[id]||0)+1;game.builds++;
+    renderPanel('build');updateUI();save();
   }
 }
-function renderUpgrades(){
-  document.getElementById('upgradeList').innerHTML=UPGRADES.map(u=>{
-    const lv=game.levels[u.id]||0;const p=price(u);const can=game.coins>=p;
-    const em=u.emojis[Math.min(lv,u.emojis.length-1)];
-    return `<div class="up-item">
-      <div style="font-size:26px;flex-shrink:0">${em}</div>
-      <div style="flex:1"><div class="u-name">${u.name} <span class="u-lv">Lv.${lv}</span></div><div class="u-desc">${u.desc} 当前+${Math.floor(lv*u.effect*100)}%</div></div>
-      <button class="u-btn" ${can?'':'disabled'} onclick="buy('${u.id}')">${fmt(p)}</button>
-    </div>`;
-  }).join('');
+function doRitual(id){
+  const r=RITUALS.find(x=>x.id===id);
+  if(game.coins<r.price)return;
+  game.coins-=r.price;game.rituals++;
+  const item=r.pool[Math.floor(Math.random()*r.pool.length)];
+  if(item.give.coin)game.coins+=item.give.coin;
+  if(item.give.grain)game.grain+=item.give.grain;
+  if(item.give.boost)game.boost=item.give.boost;
+  if(item.give.coin<0)game.coins=Math.max(0,game.coins);
+  showDraw(item);
+  renderPanel('ritual');updateUI();save();
 }
-function showAbout(){
-  document.getElementById('panelAbout').classList.add('show');
-  document.getElementById('aboutContent').innerHTML=ERAS.map((e,i)=>{
-    const cur=game.total>=e.need;
-    return `<div class="up-item" style="background:${cur?'#fff8e1':'#faf6f0'}">
-      <div style="font-size:24px;flex-shrink:0">${e.icon}</div>
-      <div style="flex:1"><div class="u-name">${e.name} ${cur?'✅':''}</div><div class="u-desc">${e.sub}</div></div>
-    </div>`;
-  }).join('');
+function showDraw(item){
+  const el=document.getElementById('drawResult');
+  document.getElementById('drIc').textContent=item.ic;
+  document.getElementById('drTitle').textContent=item.t;
+  document.getElementById('drDesc').textContent=item.d;
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),2200);
 }
-function closeOffline(){document.getElementById('offlinePop').classList.remove('show');}
+
+let lastEventTime=0;
+function maybeEvent(){
+  const now=Date.now();
+  if(now-lastEventTime>90000 && !document.getElementById('eventPop').classList.contains('show') && game.total>300){
+    lastEventTime=now;
+    const ev=EVENTS[Math.floor(Math.random()*EVENTS.length)];
+    game.eventPending=ev;
+    document.getElementById('evIc').textContent=ev.ic;
+    document.getElementById('evTitle').textContent=ev.t;
+    document.getElementById('evDesc').textContent=ev.d;
+    document.getElementById('evBtnA').textContent=ev.a.t;
+    document.getElementById('evBtnB').textContent=ev.b.t;
+    document.getElementById('eventPop').classList.add('show');
+  }
+}
+function chooseEvent(idx){
+  const ev=game.eventPending;
+  if(!ev)return;
+  const opt=idx===0?ev.a:ev.b;
+  if(opt.g.coin)game.coins+=opt.g.coin;
+  if(opt.g.grain)game.grain+=opt.g.grain;
+  if(game.coins<0)game.coins=0;
+  if(game.grain<0)game.grain=0;
+  document.getElementById('eventPop').classList.remove('show');
+  game.eventPending=null;
+  updateUI();save();
+}
+
+function questProgress(q){
+  if(q.target==='tap')return game.taps;
+  if(q.target==='build')return game.builds;
+  if(q.target==='ritual')return game.rituals;
+  if(q.target==='time')return Math.floor(game.online);
+  return 0;
+}
+function claimQuest(id){
+  const q=QUESTS.find(x=>x.id===id);
+  if(game.claimed[id])return;
+  if(questProgress(q)>=q.need){
+    game.claimed[id]=true;
+    game.coins+=q.reward;
+    updateUI();save();
+  }
+}
+
+function renderPanel(id){
+  if(id==='build'){
+    document.getElementById('buildList').innerHTML=BUILDINGS.map(b=>{
+      const lv=game.levels[b.id]||0;const p=price(b);const can=game.coins>=p;
+      return `<div class="up-item">
+        <div style="font-size:24px;flex-shrink:0">${b.name.split(' ')[0]}</div>
+        <div style="flex:1"><div class="u-name">${b.name} <span class="u-lv">Lv.${lv}</span></div><div class="u-desc">${b.desc} 当前+${Math.floor(lv*b.eff*100)}%</div></div>
+        <button class="u-btn" ${can?'':'disabled'} onclick="build('${b.id}')">${fmt(p)}</button>
+      </div>`;
+    }).join('');
+  }
+  if(id==='ritual'){
+    document.getElementById('ritualList').innerHTML=RITUALS.map(r=>{
+      const can=game.coins>=r.price;
+      return `<div class="up-item">
+        <div style="font-size:24px;flex-shrink:0">${r.pool[0].ic}</div>
+        <div style="flex:1"><div class="u-name">${r.name}</div><div class="u-desc">${r.pool.length} 种恩赐随机降临，可能得宝可能挨罚</div></div>
+        <button class="u-btn ritual" ${can?'':'disabled'} onclick="doRitual('${r.id}')">${fmt(r.price)}</button>
+      </div>`;
+    }).join('');
+  }
+  if(id==='quest'){
+    let allDone=true;
+    document.getElementById('questList').innerHTML=QUESTS.map(q=>{
+      const prog=Math.min(questProgress(q),q.need);
+      const done=prog>=q.need;
+      const claimed=!!game.claimed[q.id];
+      if(!claimed)allDone=false;
+      const pct=prog/q.need*100;
+      return `<div class="quest-item">
+        <div class="q-ic">${q.ic}</div>
+        <div class="q-info">
+          <div class="q-name">${q.name} <span style="color:#a08c77;font-size:10px">(${prog}/${q.need})</span></div>
+          <div class="q-bar"><div class="q-fill" style="width:${pct}%"></div></div>
+        </div>
+        ${claimed?'<span style="font-size:11px;color:#43a047;font-weight:700">已领</span>':
+        `<button class="q-claim" ${done?'':'disabled'} onclick="claimQuest('${q.id}')">${fmt(q.reward)}</button>`}
+      </div>`;
+    }).join('');
+    document.getElementById('questDot').style.display=allDone?'none':'block';
+  }
+  if(id==='about'){
+    document.getElementById('aboutContent').innerHTML=ERAS.map((e,i)=>{
+      const cur=game.total>=e.need;
+      return `<div class="up-item" style="background:${cur?'#fff8e1':'#faf6f0'}">
+        <div style="font-size:22px;flex-shrink:0">${e.icon}</div>
+        <div style="flex:1"><div class="u-name">${e.name} ${cur?'✅':''}</div></div>
+      </div>`;
+    }).join('');
+  }
+}
 
 function updateUI(){
   const idx=eraIdx();const era=ERAS[idx];
   document.getElementById('hudEra').textContent=era.icon;
   document.getElementById('hudEraName').textContent=era.name;
   document.getElementById('hudCoin').textContent=fmt(game.coins);
-  document.getElementById('hudRate').textContent='+'+fmt(calcRate())+'/秒';
-  const scene=document.getElementById('scene');
-  scene.style.background=`linear-gradient(180deg,${era.sky[0]} 0%,${era.sky[1]} 40%,${era.sky[2]} 40%,${era.sky[3]} 100%)`;
-  // 建筑表情随时代变化
-  const hutLv=game.levels['hut']||0;
-  const fireLv=game.levels['fire']||0;
-  const eraEmoji=idx>=9?'🏢':idx>=7?'🏯':idx>=5?'🏰':idx>=3?'🏘️':idx>=1?'🏕️':'🛖';
+  document.getElementById('hudGrain').textContent=fmt(game.grain);
+  document.getElementById('hudRate').textContent='+'+fmt(calcRate()*(game.boost>0?2:1))+'/秒';
+  document.getElementById('scene').style.background=`linear-gradient(180deg,${era.sky[0]} 0%,${era.sky[1]} 40%,${era.sky[2]} 40%,${era.sky[3]} 100%)`;
   document.getElementById('bHut').textContent=idx>=9?'🌆':idx>=7?'🏯':idx>=5?'🏰':idx>=3?'🏘️':idx>=1?'🏕️':'🛖';
-  document.getElementById('lblHut').textContent=idx>=9?'都市':idx>=7?'宫殿':idx>=5?'城堡':idx>=3?'村落':idx>=1?'部落':'茅屋';
-  document.getElementById('bFire').textContent=idx>=9?'💡':idx>=7?'🏮':idx>=5?'🔆':idx>=3?'🔥':'🔥';
-  document.getElementById('lblFire').textContent=idx>=9?'电灯':idx>=7?'灯火':idx>=5?'火把':'火堆';
-  document.getElementById('bVillager').textContent=idx>=9?'👨‍💼':idx>=7?'🧑‍🎓':idx>=5?'🛡️':idx>=3?'⚔️':idx>=1?'🧑‍🌾':'🧑‍🌾';
-  document.getElementById('lblVillager').textContent=idx>=9?'市民':idx>=7?'学子':idx>=5?'武士':idx>=3?'士兵':'村民';
-  // 朝代进度
+  document.getElementById('bFire').textContent=idx>=9?'💡':idx>=7?'🏮':idx>=5?'🔆':'🔥';
+  document.getElementById('bVillager').textContent=idx>=9?'👨‍💼':idx>=5?'🛡️':'🧑‍🌾';
   const strip=document.getElementById('eraStrip');
   strip.innerHTML=ERAS.map((e,i)=>`<div class="ed ${i<idx?'':i===idx?'cur':''}"><span class="ic">${e.icon}</span>${e.name}</div>`).join('');
   strip.scrollLeft=strip.scrollWidth;
@@ -319,16 +473,17 @@ function updateUI(){
     document.getElementById('eraProgressFill').style.width='100%';
     document.getElementById('eraProgressLabel').textContent='已抵达文明之巅 🎉';
   }
-  renderUpgrades();
+  if(document.getElementById('panelBuild').classList.contains('show'))renderPanel('build');
+  if(document.getElementById('panelRitual').classList.contains('show'))renderPanel('ritual');
+  if(document.getElementById('panelQuest').classList.contains('show'))renderPanel('quest');
 }
 
 load();
 if(game.offlineGain>0){
-  document.getElementById('offlineVal').textContent='+'+fmt(game.offlineGain);
-  document.getElementById('offlinePop').classList.add('show');
+  document.getElementById('hudCoin').textContent='+'+fmt(game.offlineGain);
 }
 updateUI();
-setInterval(tick,250);
+setInterval(tick,500);
 </script>
 </body>
 </html>
