@@ -5,316 +5,330 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
 <title>穿越文明 · 放置挂机</title>
 <style>
-:root{--bg:#faf6f0;--card:#fff;--border:#e8ddcf;--gold:#c9a227;--brown:#8b5e3c;--text:#4a3b2e;--sub:#a08c77;--green:#16a34a;--red:#dc2626}
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:480px;margin:0 auto;min-height:100vh;padding:0 16px 40px}
-.header{display:flex;align-items:center;justify-content:space-between;padding:18px 0 6px}
-.logo{font-size:20px;font-weight:800;display:flex;align-items:center;gap:8px}
-.logo-icon{width:34px;height:34px;background:linear-gradient(135deg,#c9a227,#8b5e3c);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px}
-.version{font-size:11px;color:var(--sub);background:var(--card);padding:4px 10px;border-radius:20px;border:1px solid var(--border)}
+:root{--gold:#f5c542;--brown:#8b5e3c;--dark:#2d2018;--text:#4a3b2e}
+*{margin:0;padding:0;box-sizing:border-box;user-select:none;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:480px;margin:0 auto;min-height:100vh;background:#1a1410;color:#fff;overflow-x:hidden}
 
-.era-banner{background:linear-gradient(135deg,#8b5e3c,#c9a227);color:#fff;border-radius:16px;padding:20px 18px;margin:10px 0 14px;text-align:center;position:relative;overflow:hidden}
-.era-banner::after{content:'';position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:rgba(255,255,255,.08);border-radius:50%}
-.era-banner::before{content:'';position:absolute;bottom:-30px;left:-10px;width:100px;height:100px;background:rgba(255,255,255,.05);border-radius:50%}
-.era-name{font-size:26px;font-weight:800;letter-spacing:2px}
-.era-sub{font-size:12px;opacity:.85;margin-top:4px}
-.era-icon{font-size:34px;margin-bottom:4px}
+/* ========== 场景区域 ========== */
+.scene{position:relative;height:58vh;min-height:380px;overflow:hidden;background:linear-gradient(180deg,#87ceeb 0%,#b8dff0 40%,#8bc34a 40%,#689f38 100%);transition:background 1s}
+.scene .sun{position:absolute;top:30px;right:40px;width:60px;height:60px;background:radial-gradient(circle,#fff8dc,#ffd700);border-radius:50%;box-shadow:0 0 30px rgba(255,215,0,.6)}
+.scene .cloud{position:absolute;font-size:30px;opacity:.7;animation:drift 20s linear infinite}
+.scene .cloud.c1{top:20px;left:-40px}
+.scene .cloud.c2{top:70px;left:-60px;animation-delay:10s}
+@keyframes drift{from{transform:translateX(-60px)}to{transform:translateX(560px)}}
 
-.resources{display:flex;gap:10px;margin-bottom:14px}
-.res-card{flex:1;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center}
-.res-card .val{font-size:22px;font-weight:800;color:var(--gold)}
-.res-card .val.green{color:var(--green)}
-.res-card .label{font-size:11px;color:var(--sub);margin-top:3px}
+.scene .ground{position:absolute;bottom:0;left:0;right:0;height:40%;background:linear-gradient(180deg,#8bc34a,#689f38);z-index:1}
+.scene .hill{position:absolute;bottom:25%;left:-10%;width:120%;height:30%;background:linear-gradient(180deg,#7cb342,#558b2f);border-radius:50% 50% 0 0;opacity:.5}
 
-.main-btn{width:100%;padding:22px;border:none;border-radius:16px;background:linear-gradient(135deg,#c9a227,#b8860b);color:#fff;font-size:20px;font-weight:800;cursor:pointer;margin-bottom:14px;transition:transform .1s;box-shadow:0 4px 12px rgba(201,162,39,.3)}
-.main-btn:active{transform:scale(.97)}
-.main-btn .sub{font-size:13px;font-weight:500;opacity:.9;margin-top:4px}
+/* 场景元素（建筑/人/物） */
+.elem{position:absolute;bottom:38%;font-size:52px;z-index:3;cursor:pointer;filter:drop-shadow(0 4px 6px rgba(0,0,0,.3));transition:transform .15s;animation:bob 3s ease-in-out infinite}
+.elem:active{transform:scale(.9)}
+.elem .lbl{position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:10px;background:rgba(0,0,0,.6);padding:2px 8px;border-radius:8px;white-space:nowrap}
+@keyframes bob{0%,100%{margin-bottom:0}50%{margin-bottom:6px}}
+.elem.e1{left:10%}
+.elem.e2{left:38%;animation-delay:1s}
+.elem.e3{right:8%;animation-delay:2s}
+.elem .building{display:block;text-align:center;line-height:1}
 
-.section-title{font-size:14px;font-weight:700;margin:16px 0 8px;display:flex;align-items:center;gap:6px}
-.upgrade-list{display:flex;flex-direction:column;gap:8px}
-.upgrade{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;display:flex;align-items:center;justify-content:space-between;gap:10px}
-.upgrade .info{flex:1}
-.upgrade .name{font-size:15px;font-weight:700}
-.upgrade .desc{font-size:12px;color:var(--sub);margin-top:2px}
-.upgrade .level{font-size:11px;color:var(--gold);font-weight:600}
-.buy-btn{padding:10px 16px;border:none;border-radius:10px;background:linear-gradient(135deg,#c9a227,#b8860b);color:#fff;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
-.buy-btn:disabled{background:#d8cdb8;cursor:not-allowed}
-.buy-btn .price{font-size:11px;opacity:.9}
+/* 点击金币飘字 */
+.coin-fx{position:absolute;font-size:20px;font-weight:800;color:#ffd700;pointer-events:none;animation:floatUp 1s ease-out forwards;z-index:9;text-shadow:0 2px 4px rgba(0,0,0,.5)}
+@keyframes floatUp{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-60px)}}
 
-.era-track{margin-top:14px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px}
-.era-track .title{font-size:12px;color:var(--sub);margin-bottom:8px}
-.era-list{display:flex;overflow-x:auto;gap:6px;padding-bottom:4px;scrollbar-width:none}
-.era-list::-webkit-scrollbar{display:none}
-.era-dot{flex-shrink:0;width:52px;padding:8px 4px;border-radius:10px;text-align:center;font-size:10px;background:#f5efe6;border:1px solid var(--border);color:var(--sub)}
-.era-dot.current{background:linear-gradient(135deg,#c9a227,#b8860b);color:#fff;border-color:transparent;font-weight:700}
-.era-dot.passed{color:var(--green)}
-.era-dot .ic{font-size:18px;display:block;margin-bottom:2px}
+/* 点击波纹 */
+.ripple{position:absolute;border:2px solid rgba(255,215,0,.7);border-radius:50%;pointer-events:none;animation:ripple .6s ease-out forwards;z-index:8}
+@keyframes ripple{from{width:10px;height:10px;opacity:1}to{width:70px;height:70px;opacity:0}}
 
-.progress{margin-top:10px;height:8px;background:#f0e9de;border-radius:4px;overflow:hidden}
-.progress-bar{height:100%;background:linear-gradient(90deg,#c9a227,#b8860b);border-radius:4px;transition:width .3s}
-.progress-label{font-size:11px;color:var(--sub);margin-top:5px;text-align:center}
+/* ========== 顶部资源栏（悬浮） ========== */
+.hud{position:sticky;top:0;z-index:50;background:rgba(30,22,14,.92);backdrop-filter:blur(8px);padding:10px 14px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.08)}
+.hud .era-chip{background:linear-gradient(135deg,#c9a227,#8b5e3c);border-radius:10px;padding:6px 10px;text-align:center;flex-shrink:0}
+.hud .era-chip .en{font-size:16px;line-height:1}
+.hud .era-chip .en2{font-size:9px;opacity:.85}
+.hud .coin-box{flex:1;text-align:center}
+.hud .coin-box .cv{font-size:20px;font-weight:800;color:#ffd700}
+.hud .coin-box .cl{font-size:9px;color:rgba(255,255,255,.6)}
+.hud .rate-box{text-align:right;flex-shrink:0}
+.hud .rate-box .rv{font-size:13px;font-weight:700;color:#81c784}
+.hud .rate-box .rl{font-size:9px;color:rgba(255,255,255,.6)}
 
-.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:rgba(74,59,46,.9);color:#fff;padding:10px 22px;border-radius:24px;font-size:14px;z-index:99;opacity:0;transition:opacity .3s;pointer-events:none}
-.toast.show{opacity:1}
-.toast.gold{background:rgba(201,162,39,.95)}
+/* ========== 底部操作栏 ========== */
+.bottom-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(30,22,14,.95);border-top:1px solid rgba(255,255,255,.08);padding:10px 14px calc(10px + env(safe-area-inset-bottom));display:flex;gap:8px;z-index:50}
+.bottom-bar .b-btn{flex:1;background:linear-gradient(135deg,#c9a227,#a8860b);border:none;border-radius:12px;padding:10px 4px;color:#fff;font-weight:700;font-size:13px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
+.bottom-bar .b-btn .bi{font-size:20px}
+.bottom-bar .b-btn.ghost{background:rgba(255,255,255,.1)}
+.bottom-bar .b-btn:active{transform:scale(.96)}
+
+/* ========== 面板 ========== */
+.panel{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:100%;z-index:100;display:none;background:rgba(0,0,0,.5)}
+.panel.show{display:block}
+.panel .sheet{position:absolute;bottom:0;left:0;right:0;background:#faf6f0;color:var(--text);border-radius:20px 20px 0 0;max-height:75vh;overflow-y:auto;padding:18px 18px 30px;animation:slideUp .25s ease-out}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.panel .sheet .p-title{font-size:17px;font-weight:800;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.panel .sheet .close{background:none;border:none;font-size:22px;cursor:pointer;color:#a08c77}
+.panel .sheet .desc{font-size:12px;color:#a08c77;margin-bottom:12px}
+
+.up-item{background:#fff;border:1px solid #e8ddcf;border-radius:14px;padding:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.up-item .u-name{font-size:14px;font-weight:700}
+.up-item .u-desc{font-size:11px;color:#a08c77;margin-top:2px}
+.up-item .u-lv{font-size:10px;color:#c9a227;font-weight:700}
+.up-item .u-btn{background:linear-gradient(135deg,#c9a227,#a8860b);border:none;color:#fff;border-radius:10px;padding:9px 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
+.up-item .u-btn:disabled{background:#d8cdb8}
+
+/* 朝代进度 */
+.era-progress{margin:14px 0}
+.era-progress .ep-label{font-size:11px;color:#a08c77;margin-bottom:6px;text-align:center}
+.era-progress .ep-bar{height:10px;background:#e8ddcf;border-radius:5px;overflow:hidden}
+.era-progress .ep-fill{height:100%;background:linear-gradient(90deg,#c9a227,#8b5e3c);border-radius:5px;transition:width .3s}
+.era-strip{display:flex;overflow-x:auto;gap:5px;padding:8px 0;scrollbar-width:none}
+.era-strip::-webkit-scrollbar{display:none}
+.era-strip .ed{flex-shrink:0;width:46px;text-align:center;font-size:9px;color:#a08c77;background:#fff;border:1px solid #e8ddcf;border-radius:10px;padding:5px 2px}
+.era-strip .ed .ic{font-size:16px;display:block}
+.era-strip .ed.cur{background:linear-gradient(135deg,#c9a227,#8b5e3c);color:#fff;font-weight:700;border-color:transparent}
+
+/* 离线收益弹窗 */
+.offline-pop{position:fixed;top:20%;left:50%;transform:translateX(-50%);z-index:200;background:linear-gradient(135deg,#8b5e3c,#c9a227);color:#fff;border-radius:18px;padding:20px 28px;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,.5);display:none}
+.offline-pop.show{display:block}
+.offline-pop .op-t{font-size:14px;opacity:.9;margin-bottom:6px}
+.offline-pop .op-v{font-size:28px;font-weight:800}
+.offline-pop .op-b{margin-top:12px;background:#fff;color:#8b5e3c;border:none;border-radius:12px;padding:8px 24px;font-weight:700;cursor:pointer}
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div class="logo">
-    <div class="logo-icon">🏺</div>
-    <span>穿越文明</span>
-  </div>
-  <span class="version" id="saveVersion">v0.1</span>
+<!-- 离线收益弹窗 -->
+<div class="offline-pop" id="offlinePop">
+  <div class="op-t">🌙 离线收益</div>
+  <div class="op-v" id="offlineVal">+0</div>
+  <button class="op-b" onclick="closeOffline()">收下</button>
 </div>
 
-<div class="era-banner" id="eraBanner">
-  <div class="era-icon" id="eraIcon">🪨</div>
-  <div class="era-name" id="eraName">石器时代</div>
-  <div class="era-sub" id="eraSub">钻木取火 · 万物起源</div>
+<!-- 场景 -->
+<div class="scene" id="scene" onclick="sceneTap(event)">
+  <div class="sun"></div>
+  <div class="cloud c1">☁️</div>
+  <div class="cloud c2">☁️</div>
+  <div class="hill"></div>
+  <div class="ground"></div>
+  <!-- 场景元素 -->
+  <div class="elem e1" onclick="openUpgrade(event,'hut')">
+    <span class="building" id="bHut">🛖</span>
+    <span class="lbl" id="lblHut">茅屋</span>
+  </div>
+  <div class="elem e2" onclick="openUpgrade(event,'fire')">
+    <span class="building" id="bFire">🔥</span>
+    <span class="lbl" id="lblFire">火堆</span>
+  </div>
+  <div class="elem e3" onclick="tap(event)">
+    <span class="building" id="bVillager">🧑‍🌾</span>
+    <span class="lbl" id="lblVillager">村民</span>
+  </div>
 </div>
 
-<div class="resources">
-  <div class="res-card">
-    <div class="val" id="coinVal">0</div>
-    <div class="label">💰 金币</div>
+<!-- 顶部资源栏 -->
+<div class="hud">
+  <div class="era-chip">
+    <div class="en" id="hudEra">🪨</div>
+    <div class="en2" id="hudEraName">石器时代</div>
   </div>
-  <div class="res-card">
-    <div class="val green" id="rateVal">0/秒</div>
-    <div class="label">📈 产出速率</div>
+  <div class="coin-box">
+    <div class="cv" id="hudCoin">0</div>
+    <div class="cl">金币</div>
   </div>
-  <div class="res-card">
-    <div class="val" id="offlineVal">0</div>
-    <div class="label">🌙 离线收益</div>
+  <div class="rate-box">
+    <div class="rv" id="hudRate">+1/秒</div>
+    <div class="rl">产出速率</div>
   </div>
 </div>
 
-<button class="main-btn" id="tapBtn" onclick="tap()">
-  🪵 采集木柴
-  <div class="sub">+1 金币</div>
-</button>
+<!-- 朝代进度条 -->
+<div style="background:rgba(30,22,14,.5);padding:0 14px">
+  <div class="era-progress">
+    <div class="era-strip" id="eraStrip"></div>
+    <div class="ep-label" id="eraProgressLabel"></div>
+    <div class="ep-bar"><div class="ep-fill" id="eraProgressFill"></div></div>
+  </div>
+</div>
 
-<div class="section-title">⚒️ 升级文明</div>
-<div class="upgrade-list" id="upgradeList"></div>
+<!-- 底部操作栏 -->
+<div class="bottom-bar">
+  <button class="b-btn" onclick="openUpgrade(null,'hut')"><span class="bi">🛖</span>升级</button>
+  <button class="b-btn" onclick="tapAll()"><span class="bi">👆</span>猛点</button>
+  <button class="b-btn ghost" onclick="showAbout()"><span class="bi">📜</span>文明志</button>
+</div>
 
-<div class="era-track">
-  <div class="title">🗺️ 文明之路</div>
-  <div class="era-list" id="eraList"></div>
-  <div class="progress"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
-  <div class="progress-label" id="progressLabel"></div>
+<!-- 升级面板 -->
+<div class="panel" id="panelUpgrade" onclick="if(event.target===this)closePanel()">
+  <div class="sheet">
+    <div class="p-title" id="panelTitle">升级文明 <button class="close" onclick="closePanel()">✕</button></div>
+    <div class="desc" id="panelDesc">点击建筑升级，提升产出效率</div>
+    <div id="upgradeList"></div>
+  </div>
+</div>
+
+<!-- 文明志面板 -->
+<div class="panel" id="panelAbout" onclick="if(event.target===this)closePanel()">
+  <div class="sheet">
+    <div class="p-title">📜 文明志 <button class="close" onclick="closePanel()">✕</button></div>
+    <div class="desc">从石器时代一路走向未来</div>
+    <div id="aboutContent"></div>
+  </div>
 </div>
 
 <script>
-// ============ 游戏数据 ============
-const SAVE_KEY = 'civilization_save_v1';
-
-const ERAS = [
-  {name:'石器时代',icon:'🪨',sub:'钻木取火 · 万物起源',need:0},
-  {name:'青铜时代',icon:'🏹',sub:'铜器初现 · 部落联盟',need:1000},
-  {name:'商周',icon:'🥁',sub:'礼乐初成 · 甲骨记事',need:5000},
-  {name:'春秋战国',icon:'⚔️',sub:'百家争鸣 · 群雄并起',need:20000},
-  {name:'秦汉',icon:'🏯',sub:'一统天下 · 长城万里',need:80000},
-  {name:'三国魏晋',icon:'🐴',sub:'三分天下 · 乱世英雄',need:250000},
-  {name:'隋唐',icon:'🏮',sub:'盛世长安 · 万邦来朝',need:800000},
-  {name:'宋元',icon:'⚓',sub:'市井繁华 · 海上丝路',need:2500000},
-  {name:'明清',icon:'🏺',sub:'紫禁巍峨 · 康乾盛世',need:8000000},
-  {name:'近现代',icon:'🚂',sub:'工业革命 · 时代巨变',need:25000000},
-  {name:'未来',icon:'🚀',sub:'星辰大海 · 无限可能',need:100000000},
+const SAVE_KEY='civilization_save_v1';
+const ERAS=[
+  {name:'石器时代',icon:'🪨',sub:'钻木取火',need:0,sky:['#87ceeb','#b8dff0','#8bc34a','#689f38']},
+  {name:'青铜时代',icon:'🏹',sub:'铜器初现',need:800,sky:['#a8c8e8','#c8d8e8','#9cbf6a','#779a4e']},
+  {name:'商周',icon:'🥁',sub:'礼乐初成',need:4000,sky:['#c8a878','#d8c098','#9cbf6a','#779a4e']},
+  {name:'春秋战国',icon:'⚔️',sub:'百家争鸣',need:16000,sky:['#d8a878','#e0b890','#a0c068','#7a9a48']},
+  {name:'秦汉',icon:'🏯',sub:'一统天下',need:60000,sky:['#c89868','#d0a878','#9cb860','#769a40']},
+  {name:'三国',icon:'🐴',sub:'乱世英雄',need:200000,sky:['#b08860','#c09870','#98b058','#709040']},
+  {name:'隋唐',icon:'🏮',sub:'盛世长安',need:650000,sky:['#ffa07a','#ffb890','#a0b858','#789a38']},
+  {name:'宋元',icon:'⚓',sub:'海上丝路',need:2000000,sky:['#ffc080','#ffd0a0','#98a850','#709030']},
+  {name:'明清',icon:'🏺',sub:'康乾盛世',need:6500000,sky:['#e8a878','#f0b890','#90a848','#689030']},
+  {name:'近现代',icon:'🚂',sub:'工业革命',need:20000000,sky:['#88a8c8','#a8c8d8','#88a858','#688838']},
+  {name:'未来',icon:'🚀',sub:'星辰大海',need:70000000,sky:['#404060','#606080','#506050','#304030']},
 ];
-
-// 升级项：basePrice基础价，priceMul价格倍率，effect每级效果
-const UPGRADES = [
-  {id:'axe',name:'🪓 磨利石斧',desc:'采集效率 +20%',basePrice:15,priceMul:1.5,effect:0.2},
-  {id:'fire',name:'🔥 火种技术',desc:'文明薪火 +25%',basePrice:120,priceMul:1.6,effect:0.25},
-  {id:'farm',name:'🌾 开垦农田',desc:'粮食收成 +30%',basePrice:800,priceMul:1.7,effect:0.3},
-  {id:'craft',name:'🏺 陶器作坊',desc:'制陶技艺 +35%',basePrice:5000,priceMul:1.75,effect:0.35},
-  {id:'trade',name:'🛶 贸易商路',desc:'商路收益 +40%',basePrice:30000,priceMul:1.8,effect:0.4},
-  {id:'wheel',name:'⚙️ 轮子发明',desc:'运输效率 +50%',basePrice:150000,priceMul:1.85,effect:0.5},
-  {id:'coin',name:'🪙 铸造货币',desc:'经济体系 +60%',basePrice:700000,priceMul:1.9,effect:0.6},
-  {id:'iron',name:'⚒️ 冶铁技术',desc:'铁器时代 +75%',basePrice:3000000,priceMul:1.95,effect:0.75},
+const UPGRADES=[
+  {id:'hut',name:'🛖 茅屋升级',desc:'村落发展 +20%',base:20,mul:1.5,effect:0.2,building:'hut',emojis:['🛖','🏠','🏡','🏘️','🏰']},
+  {id:'fire',name:'🔥 火种技术',desc:'文明薪火 +25%',base:150,mul:1.6,effect:0.25,building:'fire',emojis:['🔥','🏮','🔆','⚡','☀️']},
+  {id:'farm',name:'🌾 农田开垦',desc:'粮食收成 +30%',base:900,mul:1.7,effect:0.3,building:'hut',emojis:['🌾','🌿','🌻','🌳','🏞️']},
+  {id:'craft',name:'🏺 陶器作坊',desc:'制陶技艺 +35%',base:6000,mul:1.75,effect:0.35,building:'hut',emojis:['🏺','⚱️','📿','💎','🎇']},
+  {id:'trade',name:'🛶 商路开通',desc:'商路收益 +40%',base:35000,mul:1.8,effect:0.4,building:'hut',emojis:['🛶','⛵','🚢','🗺️','🛩️']},
+  {id:'wheel',name:'⚙️ 轮子发明',desc:'运输效率 +50%',base:180000,mul:1.85,effect:0.5,building:'hut',emojis:['⚙️','🛞','🚜','🚗','🚀']},
+  {id:'coin',name:'🪙 货币铸造',desc:'经济体系 +60%',base:800000,mul:1.9,effect:0.6,building:'hut',emojis:['🪙','💰','🏦','💹','🌌']},
+  {id:'iron',name:'⚒️ 冶铁技术',desc:'铁器时代 +75%',base:3500000,mul:1.95,effect:0.75,building:'hut',emojis:['⚒️','🛡️','🗡️','🏭','🛸']},
 ];
+let game={coins:0,total:0,levels:{},lastTime:Date.now(),taps:0,offlineGain:0};
 
-let game = {
-  coins: 0,
-  totalEarned: 0,
-  taps: 0,
-  levels: {},
-  lastTime: Date.now(),
-  startedAt: Date.now(),
-};
-
-// ============ 存档 ============
-function save(){
-  game.lastTime = Date.now();
-  localStorage.setItem(SAVE_KEY, JSON.stringify(game));
-}
-
+function save(){game.lastTime=Date.now();localStorage.setItem(SAVE_KEY,JSON.stringify(game));}
 function load(){
   try{
-    const raw = localStorage.getItem(SAVE_KEY);
+    const raw=localStorage.getItem(SAVE_KEY);
     if(raw){
-      const data = JSON.parse(raw);
-      // 离线收益计算
-      const elapsed = (Date.now() - data.lastTime) / 1000;
-      const rate = calcRate(data);
-      const offline = Math.floor(elapsed * rate * 0.5); // 离线只有50%效率
-      if(offline > 0){
-        data.coins += offline;
-        data.totalEarned += offline;
-        game.offlineGain = offline;
-      }
-      game = Object.assign(game, data);
+      const d=JSON.parse(raw);
+      const elapsed=(Date.now()-d.lastTime)/1000;
+      const rate=calcRate(d);
+      const off=Math.floor(elapsed*rate*0.5);
+      if(off>0){d.coins+=off;d.total+=off;d.offlineGain=off;game._offlineHours=Math.floor(elapsed/3600*10)/10;}
+      game=Object.assign(game,d);
     }
-  }catch(e){ console.log('load err', e); }
+  }catch(e){}
 }
+function calcRate(g=game){let r=1;UPGRADES.forEach(u=>{r*=1+u.effect*(g.levels[u.id]||0)});return r;}
+function price(u){return Math.floor(u.base*Math.pow(u.mul,g.levels[u.id]||0));}
+function fmt(n){if(n>=1e9)return(n/1e9).toFixed(2)+'亿';if(n>=1e6)return(n/1e6).toFixed(1)+'M';if(n>=1e4)return(n/1e3).toFixed(1)+'K';return Math.floor(n).toLocaleString();}
+function eraIdx(){let i=0;ERAS.forEach((e,j)=>{if(game.total>=e.need)i=j});return i;}
 
-// ============ 产出计算 ============
-function calcRate(g = game){
-  let rate = 1;
-  UPGRADES.forEach(u=>{
-    const lv = g.levels[u.id] || 0;
-    rate *= (1 + u.effect * lv);
-  });
-  return rate;
-}
-
-function getUpgradePrice(u, lv){
-  return Math.floor(u.basePrice * Math.pow(u.priceMul, lv));
-}
-
-// ============ 主循环 ============
 function tick(){
-  const now = Date.now();
-  const dt = (now - game.lastTime) / 1000;
-  game.lastTime = now;
-  
-  const rate = calcRate();
-  const gain = rate * dt;
-  game.coins += gain;
-  game.totalEarned += gain;
-  updateUI();
-  save();
+  const now=Date.now();const dt=(now-game.lastTime)/1000;game.lastTime=now;
+  const g=calcRate()*dt;game.coins+=g;game.total+=g;
+  updateUI();save();
 }
 
-function tap(){
-  const rate = calcRate();
-  const gain = rate;
-  game.coins += gain;
-  game.totalEarned += gain;
-  game.taps++;
-  showTapFx();
-  updateUI();
-}
-
-// ============ UI ============
-function fmt(n){
-  if(n >= 1e9) return (n/1e9).toFixed(2)+'亿';
-  if(n >= 1e6) return (n/1e6).toFixed(2)+'M';
-  if(n >= 1e4) return (n/1e3).toFixed(1)+'K';
-  return Math.floor(n).toLocaleString();
-}
-
-function currentEra(){
-  let idx = 0;
-  ERAS.forEach((e,i)=>{ if(game.totalEarned >= e.need) idx = i; });
-  return idx;
-}
-
-function updateUI(){
-  // 资源
-  document.getElementById('coinVal').textContent = fmt(game.coins);
-  document.getElementById('rateVal').textContent = fmt(calcRate())+'/秒';
-  document.getElementById('offlineVal').textContent = game.offlineGain ? fmt(game.offlineGain) : '0';
-  
-  // 朝代
-  const idx = currentEra();
-  const era = ERAS[idx];
-  document.getElementById('eraIcon').textContent = era.icon;
-  document.getElementById('eraName').textContent = era.name;
-  document.getElementById('eraSub').textContent = era.sub;
-  
-  // 朝代列表
-  const eraList = document.getElementById('eraList');
-  eraList.innerHTML = ERAS.map((e,i)=>{
-    const cls = i < idx ? 'passed' : (i === idx ? 'current' : '');
-    return `<div class="era-dot ${cls}"><span class="ic">${e.icon}</span>${e.name}</div>`;
-  }).join('');
-  const list = document.getElementById('eraList');
-  list.scrollLeft = list.scrollWidth;
-  
-  // 进度条
-  const next = ERAS[idx+1];
-  if(next){
-    const total = next.need - era.need;
-    const cur = game.totalEarned - era.need;
-    const pct = Math.min(100, Math.max(0, cur/total*100));
-    document.getElementById('progressBar').style.width = pct+'%';
-    document.getElementById('progressLabel').textContent = `距${next.name}还需 ${fmt(next.need - game.totalEarned)}`;
-  } else {
-    document.getElementById('progressBar').style.width = '100%';
-    document.getElementById('progressLabel').textContent = '已抵达文明之巅';
+function tap(e){
+  const rate=calcRate();game.coins+=rate;game.total+=rate;game.taps++;
+  if(e){
+    const r=e.currentTarget.getBoundingClientRect();
+    const x=e.clientX-r.left,y=e.clientY-r.top;
+    const fx=document.createElement('div');fx.className='coin-fx';fx.textContent='+'+fmt(rate);fx.style.left=(x+10)+'px';fx.style.top=(y-10)+'px';
+    document.getElementById('scene').appendChild(fx);
+    setTimeout(()=>fx.remove(),900);
+    const rp=document.createElement('div');rp.className='ripple';rp.style.left=(x-5)+'px';rp.style.top=(y-5)+'px';
+    document.getElementById('scene').appendChild(rp);setTimeout(()=>rp.remove(),600);
   }
-  
-  // 升级列表
-  const ul = document.getElementById('upgradeList');
-  ul.innerHTML = UPGRADES.map(u=>{
-    const lv = game.levels[u.id] || 0;
-    const price = getUpgradePrice(u, lv);
-    const canBuy = game.coins >= price;
-    return `<div class="upgrade">
-      <div class="info">
-        <div class="name">${u.name} <span class="level">Lv.${lv}</span></div>
-        <div class="desc">${u.desc}（当前 +${Math.floor(lv*u.effect*100)}%）</div>
-      </div>
-      <button class="buy-btn" ${canBuy?'':'disabled'} onclick="buy('${u.id}')">
-        升级 <span class="price">${fmt(price)}</span>
-      </button>
+  updateUI();
+}
+function tapAll(){
+  const rate=calcRate();game.coins+=rate*10;game.total+=rate*10;game.taps+=10;
+  const s=document.getElementById('scene');
+  for(let i=0;i<8;i++){
+    const fx=document.createElement('div');fx.className='coin-fx';fx.textContent='+'+fmt(rate);fx.style.left=(20+Math.random()*80)+'%';fx.style.top=(30+Math.random()*30)+'%';
+    s.appendChild(fx);setTimeout(()=>fx.remove(),900);
+  }
+  updateUI();
+}
+function sceneTap(e){
+  if(e.target.id==='scene')tap({currentTarget:e.currentTarget,clientX:e.clientX,clientY:e.clientY});
+}
+
+function openUpgrade(e,id){
+  e&&e.stopPropagation();
+  document.getElementById('panelUpgrade').classList.add('show');
+  renderUpgrades();
+}
+function closePanel(){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('show'));}
+function buy(id){
+  const u=UPGRADES.find(x=>x.id===id);
+  const p=price(u);
+  if(game.coins>=p){
+    game.coins-=p;game.levels[id]=(game.levels[id]||0)+1;
+    updateUI();save();renderUpgrades();
+  }
+}
+function renderUpgrades(){
+  document.getElementById('upgradeList').innerHTML=UPGRADES.map(u=>{
+    const lv=game.levels[u.id]||0;const p=price(u);const can=game.coins>=p;
+    const em=u.emojis[Math.min(lv,u.emojis.length-1)];
+    return `<div class="up-item">
+      <div style="font-size:26px;flex-shrink:0">${em}</div>
+      <div style="flex:1"><div class="u-name">${u.name} <span class="u-lv">Lv.${lv}</span></div><div class="u-desc">${u.desc} 当前+${Math.floor(lv*u.effect*100)}%</div></div>
+      <button class="u-btn" ${can?'':'disabled'} onclick="buy('${u.id}')">${fmt(p)}</button>
     </div>`;
   }).join('');
 }
+function showAbout(){
+  document.getElementById('panelAbout').classList.add('show');
+  document.getElementById('aboutContent').innerHTML=ERAS.map((e,i)=>{
+    const cur=game.total>=e.need;
+    return `<div class="up-item" style="background:${cur?'#fff8e1':'#faf6f0'}">
+      <div style="font-size:24px;flex-shrink:0">${e.icon}</div>
+      <div style="flex:1"><div class="u-name">${e.name} ${cur?'✅':''}</div><div class="u-desc">${e.sub}</div></div>
+    </div>`;
+  }).join('');
+}
+function closeOffline(){document.getElementById('offlinePop').classList.remove('show');}
 
-function buy(id){
-  const u = UPGRADES.find(x=>x.id===id);
-  const lv = game.levels[id] || 0;
-  const price = getUpgradePrice(u, lv);
-  if(game.coins >= price){
-    game.coins -= price;
-    game.levels[id] = lv + 1;
-    showToast(`⚒️ ${u.name} 升至 Lv.${lv+1}！`, true);
-    updateUI();
-    save();
+function updateUI(){
+  const idx=eraIdx();const era=ERAS[idx];
+  document.getElementById('hudEra').textContent=era.icon;
+  document.getElementById('hudEraName').textContent=era.name;
+  document.getElementById('hudCoin').textContent=fmt(game.coins);
+  document.getElementById('hudRate').textContent='+'+fmt(calcRate())+'/秒';
+  const scene=document.getElementById('scene');
+  scene.style.background=`linear-gradient(180deg,${era.sky[0]} 0%,${era.sky[1]} 40%,${era.sky[2]} 40%,${era.sky[3]} 100%)`;
+  // 建筑表情随时代变化
+  const hutLv=game.levels['hut']||0;
+  const fireLv=game.levels['fire']||0;
+  const eraEmoji=idx>=9?'🏢':idx>=7?'🏯':idx>=5?'🏰':idx>=3?'🏘️':idx>=1?'🏕️':'🛖';
+  document.getElementById('bHut').textContent=idx>=9?'🌆':idx>=7?'🏯':idx>=5?'🏰':idx>=3?'🏘️':idx>=1?'🏕️':'🛖';
+  document.getElementById('lblHut').textContent=idx>=9?'都市':idx>=7?'宫殿':idx>=5?'城堡':idx>=3?'村落':idx>=1?'部落':'茅屋';
+  document.getElementById('bFire').textContent=idx>=9?'💡':idx>=7?'🏮':idx>=5?'🔆':idx>=3?'🔥':'🔥';
+  document.getElementById('lblFire').textContent=idx>=9?'电灯':idx>=7?'灯火':idx>=5?'火把':'火堆';
+  document.getElementById('bVillager').textContent=idx>=9?'👨‍💼':idx>=7?'🧑‍🎓':idx>=5?'🛡️':idx>=3?'⚔️':idx>=1?'🧑‍🌾':'🧑‍🌾';
+  document.getElementById('lblVillager').textContent=idx>=9?'市民':idx>=7?'学子':idx>=5?'武士':idx>=3?'士兵':'村民';
+  // 朝代进度
+  const strip=document.getElementById('eraStrip');
+  strip.innerHTML=ERAS.map((e,i)=>`<div class="ed ${i<idx?'':i===idx?'cur':''}"><span class="ic">${e.icon}</span>${e.name}</div>`).join('');
+  strip.scrollLeft=strip.scrollWidth;
+  const next=ERAS[idx+1];
+  if(next){
+    const pct=Math.min(100,(game.total-era.need)/(next.need-era.need)*100);
+    document.getElementById('eraProgressFill').style.width=pct+'%';
+    document.getElementById('eraProgressLabel').textContent=`距 ${next.name} 还需 ${fmt(next.need-game.total)}`;
+  }else{
+    document.getElementById('eraProgressFill').style.width='100%';
+    document.getElementById('eraProgressLabel').textContent='已抵达文明之巅 🎉';
   }
+  renderUpgrades();
 }
 
-// ============ 特效 ============
-function showTapFx(){
-  const btn = document.getElementById('tapBtn');
-  btn.style.transform = 'scale(.95)';
-  setTimeout(()=>btn.style.transform = 'scale(1)', 80);
-}
-
-function showToast(msg, gold){
-  let el = document.querySelector('.toast');
-  if(!el){
-    el = document.createElement('div');
-    el.className = 'toast';
-    document.body.appendChild(el);
-  }
-  el.textContent = msg;
-  el.classList.toggle('gold', !!gold);
-  el.classList.add('show');
-  clearTimeout(showToast._t);
-  showToast._t = setTimeout(()=>el.classList.remove('show'), 1800);
-}
-
-// ============ 启动 ============
 load();
-if(game.offlineGain > 0){
-  showToast(`🌙 离线 ${Math.floor((Date.now()-game.lastTime)/3600000*10)/10} 小时，收获 ${fmt(game.offlineGain)} 金币`, true);
+if(game.offlineGain>0){
+  document.getElementById('offlineVal').textContent='+'+fmt(game.offlineGain);
+  document.getElementById('offlinePop').classList.add('show');
 }
 updateUI();
-setInterval(tick, 250);
+setInterval(tick,250);
 </script>
 </body>
 </html>
